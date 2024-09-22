@@ -134,11 +134,36 @@ Submission of homework will be done through a pull request on GitHub. Follow the
 
 3. Go to the GitHub repository and create a new pull request from your branch to the `main` branch.
 
-4. In the pull request description, write a brief summary of the changes you made and attach a screenshots of the API client showing that the new features are working correctly using the API endpoints and the API testing client.
+4. In the pull request title, write your initials and following text: `Homework Submission`. For example: `[AB] Homework Submission`.
 
-5. Assign the pull request to me (NegatiV-64) and request a review. This will notify me that your homework is ready for review. And it means that you have completed the homework.
+5. In the pull request description, write a brief summary of the changes you made and attach a screenshots of the API client showing that the new features are working correctly using the API endpoints and the API testing client. As a reference, you can use the following template (Checked checkboxes `[x]` are the completed tasks and unchecked checkboxes `[ ]` are the tasks that are not completed):
 
-6. Wait for me to review your pull request and provide feedback. If I am not reviewing your pull request within 24 hours, please send me a message in Microsoft Teams.
+   ```markdown
+    ## Summary
+    - [x] Added a new route for events to create a new event
+    - [x] Added a new route for events to update an existing event
+    - [ ] Added a new route for events to delete an existing event
+    - [ ] Added a new migration to create a new `tickets` table
+    - [ ] Added a new route for tickets to create a new ticket for an event
+    - [ ] Added a new route to get all tickets for an event
+    - [ ] Added a new route to get a single ticket for an event
+
+    ## Screenshots
+    1. /POST /events
+    ![POST /events](./screenshots/post-events.png)
+    2. /PATCH /events/:eventId
+    ![PATCH /events/:eventId](./screenshots/patch-events.png)
+    3. /POST /tickets
+    ![POST /tickets](./screenshots/post-tickets.png)
+    4. /GET /events/:eventId/tickets
+    ![GET /events/:eventId/tickets](./screenshots/get-tickets.png)
+    5. /GET /tickets/:ticketId
+    ![GET /tickets/:ticketId](./screenshots/get-ticket.png)
+    ```
+
+6. Assign the pull request to me (NegatiV-64) and request a review. This will notify me that your homework is ready for review. And it means that you have completed the homework.
+
+7. Wait for me to review your pull request and provide feedback. If I am not reviewing your pull request within 24 hours, please send me a message in Microsoft Teams.
 
 ## Deadlines, Guidelines, and Late Submissions
 
