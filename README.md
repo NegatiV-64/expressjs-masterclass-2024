@@ -36,4 +36,3 @@ This is a simple ExpressJS project that implements a RESTful API for managing ev
 ## Contact
 
 If you have any questions or need further assistance, please feel free to contact me via Microsoft Teams or personally in the office.
-
