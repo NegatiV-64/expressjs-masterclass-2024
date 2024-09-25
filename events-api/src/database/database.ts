@@ -14,7 +14,7 @@ export class DbClient {
 
   public async execute<T, K = unknown>(
     query: string,
-    params?: K[]
+    params?: K[],
   ): Promise<T[]> {
     const queryRunner = this.connection.createQueryRunner();
 
@@ -54,7 +54,7 @@ export async function seed() {
         event.event_description,
         event.event_location,
         event.event_date,
-      ]
+      ],
     );
   }
 

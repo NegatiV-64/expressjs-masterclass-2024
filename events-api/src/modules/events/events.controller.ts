@@ -1,10 +1,16 @@
+import { EventsService } from "#/modules/events/events.service";
+import { validateCreateEventsDto } from "#/shared/validators/request-body.validator";
+import { validateSearchParams } from "#/shared/validators/search-params.validator";
+import { Router } from "express";
 import {
   EventsSearchParamsDto,
   eventsSearchParamsDtoSchema,
-} from "#/modules/events/dto/requests/events-search-params.dto";
-import { EventsService } from "#/modules/events/events.service";
-import { validateSearchParams } from "#/shared/validators/search-params.validator";
-import { Router } from "express";
+} from "./dto/request-validator-schemas/events-search-params.schema";
+import {
+  createEventDtoSchema,
+  EventsCreateSchemaDto,
+} from "./dto/request-validator-schemas/create-event.schema";
+import { CreateEventDto } from "./dto/create-event.dto";
 
 export const EventsController = Router();
 
@@ -21,5 +27,20 @@ EventsController.get(
       data: events,
       searchParams,
     });
-  }
+  },
+);
+
+EventsController.post(
+  "/",
+  validateCreateEventsDto(createEventDtoSchema),
+  async (req, res) => {
+    const requestBody = req.body as unknown as CreateEventDto;
+
+    const result = await EventsService.createEvent(requestBody);
+
+    return res.status(201).json({
+      message: "Events created successfully",
+      data: result,
+    });
+  },
 );
