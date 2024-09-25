@@ -10,6 +10,7 @@ import { eventsCreateDtoSchema } from "./dto/requests/events-create.dto";
 import { eventsUpdateDtoSchema } from "./dto/requests/events-update.dto";
 import { validateRouteParams } from "#/shared/validators/route-params.validator";
 import { eventsRouteParamsDtoSchema } from "./dto/requests/events-route-params.dto";
+import { TicketsService } from "../tickets/tickets.service";
 
 export const EventsController = Router();
 
@@ -71,6 +72,21 @@ EventsController.delete(
 
     return res.status(204).json({
       message: "Event deleted successfully",
+    });
+  }
+);
+
+EventsController.get(
+  "/:id/tickets",
+  validateRouteParams(eventsRouteParamsDtoSchema),
+  async (req, res) => {
+    const tickets = await TicketsService.getTicketsForEvent(
+      req.params["id"] as string
+    );
+
+    return res.status(201).json({
+      message: "Tickets retrieved successfully",
+      data: tickets,
     });
   }
 );
