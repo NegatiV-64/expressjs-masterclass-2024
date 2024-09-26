@@ -8,9 +8,9 @@ import {
 } from "./dto/request-validator-schemas/events-search-params.schema";
 import {
   createEventDtoSchema,
-  EventsCreateSchemaDto,
 } from "./dto/request-validator-schemas/create-event.schema";
 import { CreateEventDto } from "./dto/create-event.dto";
+import { UpdateEventDto } from "./dto/update-event.dto";
 
 export const EventsController = Router();
 
@@ -44,3 +44,18 @@ EventsController.post(
     });
   },
 );
+
+EventsController.put("/:eventId", async (req, res) => {
+  const eventId = req.params.eventId;
+
+  const requestBody = req.body as unknown as UpdateEventDto;
+
+  console.log("Update event: ", requestBody);
+
+  const result = await EventsService.updateEventById(eventId, requestBody);
+
+  return res.status(200).json({
+    message: "Events updated successfully",
+    data: result,
+  });
+})
