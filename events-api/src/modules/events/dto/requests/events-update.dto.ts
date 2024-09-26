@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { dateFormatRegex } from "#/shared/constants";
 
 export const eventsUpdateDtoSchema = z.object({
   event_name: z.string().min(3).max(255).optional(),
@@ -6,7 +7,9 @@ export const eventsUpdateDtoSchema = z.object({
   event_location: z.string().min(3).max(255).optional(),
   event_date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+    .regex(dateFormatRegex, {
+      message: "Invalid date format, expected 'YYYY-MM-DDTHH:mm:ss'",
+    })
     .optional(),
 });
 

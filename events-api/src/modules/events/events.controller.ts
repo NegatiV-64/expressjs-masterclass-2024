@@ -11,6 +11,7 @@ import { eventsUpdateDtoSchema } from "./dto/requests/events-update.dto";
 import { validateRouteParams } from "#/shared/validators/route-params.validator";
 import { eventsRouteParamsDtoSchema } from "./dto/requests/events-route-params.dto";
 import { TicketsService } from "../tickets/tickets.service";
+import { getIdParam } from "#/shared/utils";
 
 export const EventsController = Router();
 
@@ -34,10 +35,11 @@ EventsController.post(
   "/",
   validateRequestBody(eventsCreateDtoSchema),
   async (req, res) => {
-    await EventsService.createEvent(req.body);
+    const event = await EventsService.createEvent(req.body);
 
     return res.status(201).json({
       message: "Event created successfully",
+      data: event,
     });
   }
 );
@@ -49,14 +51,15 @@ EventsController.patch(
   async (req, res) => {
     const event = await EventsService.updateEvent(
       req.body,
-      req.params["id"] as string
+      getIdParam(req.params)
     );
     if (event === null) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Event updated successfully",
+      data: event,
     });
   }
 );
@@ -72,6 +75,7 @@ EventsController.delete(
 
     return res.status(204).json({
       message: "Event deleted successfully",
+      data: event,
     });
   }
 );
@@ -80,11 +84,11 @@ EventsController.get(
   "/:id/tickets",
   validateRouteParams(eventsRouteParamsDtoSchema),
   async (req, res) => {
-    const tickets = await TicketsService.getTicketsForEvent(
+    const tickets = await EventsService.getTicketsForEvent(
       req.params["id"] as string
     );
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Tickets retrieved successfully",
       data: tickets,
     });
