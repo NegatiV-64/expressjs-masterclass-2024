@@ -68,12 +68,12 @@ EventsController.delete(
   "/:id",
   validateRouteParams(eventsRouteParamsDtoSchema),
   async (req, res) => {
-    const event = await EventsService.deleteEvent(req.params["id"] as string);
+    const event = await EventsService.deleteEvent(getIdParam(req.params));
     if (event === null) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    return res.status(204).json({
+    return res.status(200).json({
       message: "Event deleted successfully",
       data: event,
     });

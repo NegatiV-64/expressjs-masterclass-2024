@@ -1,6 +1,6 @@
 import { EventModel } from "#/modules/events/events.model";
 import { EventsRepository } from "#/modules/events/events.repository";
-import { TicketsModel } from "../tickets/tickets.model";
+import { TicketModel } from "../tickets/tickets.model";
 import { EventCreateDto } from "./dto/requests/events-create.dto";
 
 export class EventsService {
@@ -25,7 +25,7 @@ export class EventsService {
     return await EventsRepository.delete(id);
   }
 
-  static async getTicketsForEvent(id: string): Promise<TicketsModel[]> {
+  static async getTicketsForEvent(id: string): Promise<TicketModel[]> {
     return await EventsRepository.getAllTickets(id);
   }
 }

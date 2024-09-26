@@ -5,6 +5,7 @@ import { TicketsService } from "./tickets.service";
 import { validateRouteParams } from "#/shared/validators/route-params.validator";
 import { eventsRouteParamsDtoSchema } from "../events/dto/requests/events-route-params.dto";
 import { getIdParam } from "#/shared/utils";
+import { NotFoundError } from "#/shared/errors/notFoundError";
 
 export const TicketsController = Router();
 
@@ -25,11 +26,17 @@ TicketsController.get(
   "/:id",
   validateRouteParams(eventsRouteParamsDtoSchema),
   async (req, res) => {
-    const ticket = await TicketsService.getTicket(getIdParam(req.params));
+    try {
+      const ticket = await TicketsService.getTicket(getIdParam(req.params));
 
-    return res.status(200).json({
-      message: "Ticket retrieved successfully",
-      data: ticket,
-    });
+      return res.status(200).json({
+        message: "Ticket retrieved successfully",
+        data: ticket,
+      });
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return res.status(404).json({ message: err.message });
+      }
+    }
   }
 );

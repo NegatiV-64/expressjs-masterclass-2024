@@ -1,4 +1,4 @@
-export interface TicketsModel {
+export interface TicketModel {
   ticketId: string;
   ticketQuantity: number;
   ticketPrice: number;

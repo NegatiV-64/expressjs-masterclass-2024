@@ -1,6 +1,7 @@
 import { db } from "#/database/database";
-import { CreateEventModel, EventModel } from "#/modules/events/events.model";
-import { TicketsModel } from "../tickets/tickets.model";
+import { EventModel } from "#/modules/events/events.model";
+import { eventColumns } from "#/shared/utils";
+import { TicketModel } from "../tickets/tickets.model";
 import { EventCreateDto } from "./dto/requests/events-create.dto";
 import { v4 } from "uuid";
 
@@ -8,13 +9,7 @@ export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
     const result = db.execute<EventModel>(`
         SELECT
-            event_id as eventId,
-            event_name as eventName,
-            event_description as eventDescription,
-            event_location as eventLocation,
-            event_date as eventDate,
-            event_created_at as eventCreatedAt,
-            event_updated_at as eventUpdatedAt
+            ${eventColumns}
         FROM
             events
     `);
@@ -24,7 +19,7 @@ export class EventsRepository {
 
   static async findById(id: string): Promise<EventModel[] | null> {
     const res = await db.execute<EventModel>(
-      `SELECT event_id as eventId FROM events WHERE event_id = ?`,
+      `SELECT ${eventColumns} FROM events WHERE event_id = ?`,
       [id]
     );
 
@@ -48,7 +43,7 @@ export class EventsRepository {
           event_location,
           event_date
         ) VALUES (?, ?, ?, ?, ?) 
-         RETURNING * 
+         RETURNING ${eventColumns}
         ;
       `,
       [eventId, eventName, eventDescription, eventLocation, eventDate]
@@ -72,7 +67,15 @@ export class EventsRepository {
       .join(", ");
 
     const sql = `UPDATE events SET ${setClause} WHERE event_id = ? RETURNING *`;
-    return await db.execute<EventModel>(sql, values);
+    await db.execute<EventModel>(sql, values);
+    return await db.execute<EventModel>(
+      `
+        SELECT
+          ${eventColumns}
+      FROM events WHERE event_id = ?
+      `,
+      [id]
+    );
   }
 
   static async delete(id: string): Promise<EventModel[] | null> {
@@ -82,16 +85,24 @@ export class EventsRepository {
       return null;
     }
 
-    const deletedEvent = await db.execute<EventModel>(
-      `DELETE FROM events WHERE event_id = ? RETURNING *`,
+    await db.execute(`DELETE FROM tickets WHERE event_id = ?`, [id]);
+    const result = await db.execute<EventModel>(
+      `
+      SELECT
+         ${eventColumns}
+      FROM
+          events
+          WHERE event_id = ?
+  `,
       [id]
     );
-    console.log(deletedEvent, "deletedEvent");
-    return deletedEvent;
+
+    await db.execute<EventModel>(`DELETE FROM events WHERE event_id = ?`, [id]);
+    return result;
   }
 
-  static async getAllTickets(id: string): Promise<TicketsModel[]> {
-    const result = await db.execute<TicketsModel>(
+  static async getAllTickets(id: string): Promise<TicketModel[]> {
+    const result = await db.execute<TicketModel>(
       `
         SELECT
             ticket_id as ticketId,
