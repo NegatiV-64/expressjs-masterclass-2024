@@ -18,4 +18,20 @@ export class EventsRepository {
 
     return result;
   }
+
+  static async insert(event: EventModel): Promise<void> {
+    await db.execute(
+      `INSERT INTO events (event_id, event_name, event_description, event_location, event_date, event_created_at, event_updated_at) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+      [
+        event.eventId,
+        event.eventName,
+        event.eventDescription,
+        event.eventLocation,
+        event.eventDate,
+        event.eventCreatedAt,
+        event.eventUpdatedAt
+      ]
+    );
+  }
 }
+

@@ -10,7 +10,25 @@ export class DbClient {
 
   public async init() {
     await this.connection.initialize();
+
+    // await this.createEventsTable();
   }
+
+  // private async createEventsTable() {
+  //   const createTableQuery = `
+  //     CREATE TABLE IF NOT EXISTS events (
+  //       event_id TEXT PRIMARY KEY,
+  //       event_name TEXT NOT NULL,
+  //       event_description TEXT,
+  //       event_location TEXT,
+  //       event_date TEXT NOT NULL,
+  //       event_created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  //       event_updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  //     );
+  //   `;
+
+  //   await this.execute(createTableQuery);
+  // }
 
   public async execute<T, K = unknown>(
     query: string,
