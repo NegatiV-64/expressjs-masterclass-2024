@@ -66,25 +66,25 @@ export class EventsRepository {
          WHERE
             event_id = ?;`,
         [
-          updatedEvent.eventName || event.eventName,
-          updatedEvent.eventDescription || event.eventDescription,
-          updatedEvent.eventLocation || event.eventLocation,
-          new Date((updatedEvent.eventDate) || event.eventDate)
+          updatedEvent.eventName || event?.eventName,
+          updatedEvent.eventDescription || event?.eventDescription,
+          updatedEvent.eventLocation || event?.eventLocation,
+          new Date(updatedEvent.eventDate || event?.eventDate || "")
             .toISOString()
             .replace("T", " ")
             .replace("Z", ""),
-          eventId || event.eventId,
+          eventId || event?.eventId,
         ],
       );
 
-      return "ok";
+      return "Event updated successfully";
     } catch (err) {
       console.error("EventRepositoryError: couldn't update event!", err);
       throw new Error();
     }
   }
 
-  static async getById(eventId: string): Promise<EventModel> {
+  static async getById(eventId: string): Promise<EventModel | undefined> {
     try {
       const result = await db.execute<EventModel>(`
         SELECT
@@ -101,7 +101,7 @@ export class EventsRepository {
             event_id = ?
     `, [eventId]);
 
-      return result[0]!;
+      return result[0];
 
     } catch (err) {
       console.error("EventRepositoryError: couldn't get event by id!", err);

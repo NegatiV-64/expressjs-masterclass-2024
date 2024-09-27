@@ -32,10 +32,20 @@ export class EventsService {
   }
   static async deleteEventById(eventId: string) {
     try {
-      const result = await EventsRepository.deleteById(eventId);
+      await EventsRepository.deleteById(eventId);
       return "Event deleted successfully!";
     } catch (err) {
       console.error("EventsServiceError: ", err);
+      throw new Error();
+    }
+  }
+
+  static async getEventById(eventId: string): Promise<EventModel | undefined> {
+    try {
+      const result = await EventsRepository.getById(eventId);
+      return result;
+    } catch (err) {
+      console.error("EventsServiceError: couldn't get event!");
       throw new Error();
     }
   }

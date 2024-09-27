@@ -1,6 +1,6 @@
 import { EventsService } from "#/modules/events/events.service";
-import { validateCreateEventsDto } from "#/shared/validators/request-body.validator";
-import { validateSearchParams } from "#/shared/validators/search-params.validator";
+import { validateCreateEventsDto } from "#/shared/validators/event-validators/request-body.validator";
+import { validateSearchParams } from "#/shared/validators/event-validators/search-params.validator";
 import { Router } from "express";
 import {
   EventsSearchParamsDto,
@@ -11,7 +11,7 @@ import {
 } from "./dto/request-validator-schemas/create-event.schema";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { eventsDeleteParamsDtoSchema } from "./dto/request-validator-schemas/events-delete-params.schema";
-import { validateDeleteParams } from "#/shared/validators/delete-params.validator";
+import { validateDeleteParams } from "#/shared/validators/event-validators/delete-params.validator";
 import { UpdateEventDto } from "./dto/update-event.dto";
 
 export const EventsController = Router();
