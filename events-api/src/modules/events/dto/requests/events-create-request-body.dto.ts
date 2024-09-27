@@ -12,7 +12,7 @@ export const eventsCreateRequestBodyDtoSchema = z.object({
   eventLocation: z
     .string()
     .min(1, { message: "Location is required" })
-    .max(70, { message: "Max length is 50" }),
+    .max(70, { message: "Max length is 70" }),
   eventDate: z
     .string()
     .min(1, { message: "Date is required" })

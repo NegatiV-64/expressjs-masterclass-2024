@@ -6,7 +6,7 @@ export const eventsUpdateRequestBodyDtoSchema = z.object({
     .string()
     .max(1000, { message: "Max length is 1000" })
     .optional(),
-  eventLocation: z.string().max(70, { message: "Max length is 50" }).optional(),
+  eventLocation: z.string().max(70, { message: "Max length is 70" }).optional(),
   eventDate: z
     .string()
     .regex(
