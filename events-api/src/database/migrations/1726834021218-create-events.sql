@@ -1,4 +1,5 @@
 -- UP
+
 CREATE TABLE IF NOT EXISTS events (
     event_id TEXT PRIMARY KEY,
     event_name TEXT NOT NULL,

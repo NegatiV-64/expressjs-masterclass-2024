@@ -1,0 +1,4 @@
+-- UP
+-- Write your migration here
+-- DOWN
+-- Write your rollback here
