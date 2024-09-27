@@ -17,4 +17,14 @@ export class TicketsService {
 
     return newTicket;
   }
+
+  static async getTicket(ticketId: string): Promise<TicketModel[] | null> {
+    const ticket = await TicketsRepository.getOne(ticketId);
+
+    if (ticket.length === 0) {
+      return null;
+    }
+
+    return ticket;
+  }
 }

@@ -22,4 +22,28 @@ export class TicketsRepository {
 
     return result;
   }
+
+  static async getOne(ticketId: string): Promise<TicketModel[]> {
+    const result = db.execute<TicketModel>(
+      `
+        SELECT
+            t.ticket_id as ticketId,
+            t.ticket_quantity as ticketQuantity,
+            t.ticket_price as ticketPrice,
+            t.event_id as eventId,
+            event_name as eventName,
+            event_description as eventDescription,
+            event_location as eventLocation,
+            event_date as eventDate,
+            event_created_at as eventCreatedAt,
+            event_updated_at as eventUpdatedAt
+        FROM tickets as t
+        INNER JOIN events USING(event_id)
+        WHERE t.ticket_id = ?
+    `,
+      [ticketId],
+    );
+
+    return result;
+  }
 }
