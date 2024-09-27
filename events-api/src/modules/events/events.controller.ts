@@ -24,4 +24,3 @@ EventsController.get(
   }
 );
 
-"hello"
