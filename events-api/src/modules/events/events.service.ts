@@ -1,10 +1,13 @@
 import { EventModel } from "#/modules/events/events.model";
 import { EventsRepository } from "#/modules/events/events.repository";
+import { EventsCreateDto } from "./dto/requests";
 
 export class EventsService {
-    static async getEvents(): Promise<EventModel[]> {
-        const events = await EventsRepository.getAll();
+    static getEvents(): Promise<EventModel[]> {
+        return EventsRepository.getAll();
+    }
 
-        return events;
+    static createEvent(event: EventsCreateDto): Promise<EventModel[]> {
+        return EventsRepository.createEvent(event);
     }
 }

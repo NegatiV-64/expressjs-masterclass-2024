@@ -1,8 +1,10 @@
 import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
+import { EventsCreateDto } from "./dto/requests";
+import { v4 as uuid } from "uuid";
 
 export class EventsRepository {
-    static async getAll(): Promise<EventModel[]> {
+    static getAll(): Promise<EventModel[]> {
         const result = db.execute<EventModel>(`
         SELECT
             event_id as eventId,
@@ -15,6 +17,30 @@ export class EventsRepository {
         FROM
             events
     `);
+
+        return result;
+    }
+
+    static createEvent(event: EventsCreateDto): Promise<EventModel[]> {
+        const { eventName, eventDescription, eventLocation, eventDate } =
+            event;
+        const eventId = uuid();
+
+        const result = db.execute<EventModel>(
+            `
+            INSERT INTO events
+            (event_id, event_name, event_description, event_location, event_date)
+            VALUES (?, ?, ?, ?, ?)
+            RETURNING *
+        `,
+            [
+                eventId,
+                eventName,
+                eventDescription,
+                eventLocation,
+                eventDate
+            ]
+        );
 
         return result;
     }
