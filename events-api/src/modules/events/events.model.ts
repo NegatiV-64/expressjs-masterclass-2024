@@ -7,3 +7,6 @@ export interface EventModel {
   eventCreatedAt: string;
   eventUpdatedAt: string;
 }
+
+export interface NewEvent
+  extends Omit<EventModel, "eventId" | "eventCreatedAt" | "eventUpdatedAt"> {}
