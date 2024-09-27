@@ -17,4 +17,12 @@ export class TicketsService {
 
     return res;
   }
+
+  static async getAllTickets(): Promise<TicketModel[]> {
+    const tickets = await TicketsRepository.getAllTickets();
+    if (!tickets || tickets.length === 0) {
+      throw new NotFoundError("No tickets found");
+    }
+    return tickets;
+  }
 }

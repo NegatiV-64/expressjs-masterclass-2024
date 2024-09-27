@@ -14,7 +14,6 @@ TicketsController.post(
   validateRequestBody(ticketsCreateDtoSchema),
   async (req, res) => {
     const ticket = await TicketsService.createTicket(req.body);
-
     return res.status(201).json({
       message: "Tickets created successfully",
       data: ticket,
@@ -22,13 +21,24 @@ TicketsController.post(
   }
 );
 
+TicketsController.get("/", async (req, res) => {
+  try {
+    const tickets = await TicketsService.getAllTickets();
+    return res.status(200).json({
+      message: "Tickets retrieved successfully",
+      data: tickets,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 TicketsController.get(
   "/:id",
   validateRouteParams(eventsRouteParamsDtoSchema),
   async (req, res) => {
     try {
       const ticket = await TicketsService.getTicket(getIdParam(req.params));
-
       return res.status(200).json({
         message: "Ticket retrieved successfully",
         data: ticket,

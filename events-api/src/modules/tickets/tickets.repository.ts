@@ -20,7 +20,7 @@ export class TicketsRepository {
     return res[0] as TicketModel;
   }
 
-  static async getTicketById(id: string): Promise<TicketModel | TicketModel[]> {
+  static async getTicketById(id: string): Promise<TicketModel | null> {
     const result = await db.execute<TicketModel>(
       `
         SELECT
@@ -30,7 +30,7 @@ export class TicketsRepository {
         FROM
             tickets
         WHERE ticket_id = ?
-    `,
+      `,
       [id]
     );
 
@@ -38,6 +38,24 @@ export class TicketsRepository {
       return result[0] as TicketModel;
     }
 
-    return result;
+
+
+    return null; 
+  }
+
+  static async getAllTickets(): Promise<TicketModel[]> {
+    const result = await db.execute<TicketModel>(
+      `
+        SELECT
+            ticket_id as ticketId,
+            ticket_quantity as ticketQuantity,
+            ticket_price as ticketPrice,
+            event_id as eventId
+        FROM
+            tickets
+      `
+    );
+
+    return result; 
   }
 }
