@@ -2,8 +2,14 @@ import {
   EventsSearchParamsDto,
   eventsSearchParamsDtoSchema,
 } from "#/modules/events/dto/requests/events-search-params.dto";
-import { eventsCreateRequestBodyDtoSchema } from "./dto/requests/events-create-request-body.dto";
-import { eventsUpdateRequestBodyDtoSchema } from "./dto/requests/events-update-request-body.dto";
+import {
+  eventsCreateRequestBodyDto,
+  eventsCreateRequestBodyDtoSchema,
+} from "./dto/requests/events-create-request-body.dto";
+import {
+  eventsUpdateRequestBodyDto,
+  eventsUpdateRequestBodyDtoSchema,
+} from "./dto/requests/events-update-request-body.dto";
 import { EventsService } from "#/modules/events/events.service";
 import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { validateSearchParams } from "#/shared/validators/search-params.validator";
@@ -32,7 +38,9 @@ EventsController.post(
   "/",
   validateRequestBody(eventsCreateRequestBodyDtoSchema),
   async (req, res) => {
-    const newEvent = await EventsService.createEvent(req.body);
+    const newEvent = await EventsService.createEvent(
+      req.body as unknown as eventsCreateRequestBodyDto,
+    );
 
     return res.status(201).json({
       message: "Event created successfully",
@@ -64,7 +72,7 @@ EventsController.patch(
   validateRequestBody(eventsUpdateRequestBodyDtoSchema),
   async (req, res) => {
     const updatedEvent = await EventsService.updateEvent(
-      req.body,
+      req.body as unknown as eventsUpdateRequestBodyDto,
       req.params["eventId"] as string,
     );
 

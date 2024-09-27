@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { ticketsCreateRequestBodyDtoSchema } from "./dto/requests/tickets-create-request-body.dto";
+import {
+  ticketsCreateRequestBodyDto,
+  ticketsCreateRequestBodyDtoSchema,
+} from "./dto/requests/tickets-create-request-body.dto";
 import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { TicketsService } from "./tickets.service";
 import { validateIdRouteParameter } from "#/shared/validators/route-parameter.validator";
@@ -10,7 +13,9 @@ TicketsController.post(
   "/",
   validateRequestBody(ticketsCreateRequestBodyDtoSchema),
   async (req, res) => {
-    const newTicket = await TicketsService.createTicket(req.body);
+    const newTicket = await TicketsService.createTicket(
+      req.body as unknown as ticketsCreateRequestBodyDto,
+    );
 
     if (!newTicket) {
       res.status(400).json({
