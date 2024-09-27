@@ -1,5 +1,6 @@
 import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
+import { EventsUpdateDto } from "./dto/requests/events-update-data.dto";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
@@ -18,4 +19,36 @@ export class EventsRepository {
 
     return result;
   }
+
+  static async insert(event: EventModel): Promise<void> {
+    await db.execute(
+      `INSERT INTO events (event_id, event_name, event_description, event_location, event_date, event_created_at, event_updated_at) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+      [
+        event.eventId,
+        event.eventName,
+        event.eventDescription,
+        event.eventLocation,
+        event.eventDate,
+        event.eventCreatedAt,
+        event.eventUpdatedAt
+      ]
+    );
+  }
+
+  static async update(eventId: string, columnName: string[], values: string[]): Promise<void> {
+    const columnNames = columnName.map((key) => `${key} = ?`).join(", ");
+
+    await db.execute(
+      `UPDATE events SET ${columnNames} WHERE event_id = ?;`,
+      [...values , eventId]
+    )
+  }
+
+  static async delete(eventId: string): Promise<void> {
+    await db.execute(
+      `DELETE FROM events WHERE event_id = ?;`, [eventId]
+    )
+  }
+
 }
+
