@@ -5,12 +5,10 @@ import {
 import { eventsCreateRequestBodyDtoSchema } from "./dto/requests/events-create-request-body.dto";
 import { eventsUpdateRequestBodyDtoSchema } from "./dto/requests/events-update-request-body.dto";
 import { EventsService } from "#/modules/events/events.service";
-// import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { validateSearchParams } from "#/shared/validators/search-params.validator";
 import { Router } from "express";
 import { validateRequestBody } from "../../shared/validators/request-body.validator";
 import { validateIdRouteParameter } from "../../shared/validators/route-parameter.validator";
-// import { validateIdRouteParameter } from "#/shared/validators/route-parameter.validator";
 
 export const EventsController = Router();
 
