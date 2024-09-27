@@ -18,7 +18,12 @@ export class TicketsService {
     }
 
     static async getEventTickets(eventId: string): Promise<TicketModel[]> {
-        const events = await TicketsRepository.getTicketsByEventId(eventId);
-        return events;
+        const tickets = await TicketsRepository.getTicketsByEventId(eventId);
+        return tickets;
+    }
+
+    static async getTicketById(ticketId: string): Promise<TicketModel[]> {
+        const ticket = await TicketsRepository.getTicket(ticketId);
+        return ticket;
     }
 }

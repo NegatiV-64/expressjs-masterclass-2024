@@ -18,6 +18,22 @@ export class TicketsRepository {
     return result;
   }
 
+  static async getTicket(ticketId: string): Promise<TicketModel[]> {
+    const result = db.execute<TicketModel>(`
+        SELECT
+          ticket_id as ticketId,
+          ticket_quantity as ticketQuantity,
+          ticket_price as ticketPrice,
+          event_id as eventId
+        FROM
+          tickets
+        WHERE 
+          ticket_id = ?;`, [ticketId]
+    );
+
+    return result;
+  }
+
   static async insert(ticket: TicketModel): Promise<void> {
     await db.execute(
       `INSERT INTO tickets (ticket_id, ticket_quantity, ticket_price, event_id) VALUES (?, ?, ?, ?);`,
