@@ -47,7 +47,7 @@ EventsController.get(
   async (req, res) => {
     const event = await EventsService.getEvent(req.params["eventId"] as string);
 
-    if (event.length === 0) {
+    if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
 
@@ -68,7 +68,7 @@ EventsController.patch(
       req.params["eventId"] as string,
     );
 
-    if (updatedEvent.length === 0) {
+    if (!updatedEvent) {
       return res.status(404).json({ message: "Event not found" });
     }
 
@@ -87,7 +87,7 @@ EventsController.delete(
       req.params["eventId"] as string,
     );
 
-    if (deletedEvent.length === 0) {
+    if (!deletedEvent) {
       return res.status(404).json({ message: "Event not found" });
     }
 

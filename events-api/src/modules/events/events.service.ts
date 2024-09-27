@@ -19,8 +19,12 @@ export class EventsService {
     return newEvent;
   }
 
-  static async getEvent(id: string): Promise<EventModel[]> {
+  static async getEvent(id: string): Promise<EventModel[] | null> {
     const event = await EventsRepository.getOne(id);
+
+    if (event.length === 0) {
+      return null;
+    }
 
     return event;
   }
@@ -28,14 +32,22 @@ export class EventsService {
   static async updateEvent(
     data: eventsUpdateRequestBodyDto,
     id: string,
-  ): Promise<EventModel[]> {
+  ): Promise<EventModel[] | null> {
     const updatedEvent = await EventsRepository.updateOne(data, id);
+
+    if (updatedEvent.length === 0) {
+      return null;
+    }
 
     return updatedEvent;
   }
 
-  static async deleteEvent(id: string): Promise<EventModel[]> {
+  static async deleteEvent(id: string): Promise<EventModel[] | null> {
     const deletedEvent = await EventsRepository.deleteOne(id);
+
+    if (deletedEvent.length === 0) {
+      return null;
+    }
 
     return deletedEvent;
   }
