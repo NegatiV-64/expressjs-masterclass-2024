@@ -19,9 +19,9 @@ export class EventsService {
   }
 
   static async getEvent(id: string): Promise<EventModel[]> {
-    const events = await EventsRepository.getOne(id);
+    const event = await EventsRepository.getOne(id);
 
-    return events;
+    return event;
   }
 
   static async updateEvent(
@@ -31,5 +31,11 @@ export class EventsService {
     const updatedEvent = await EventsRepository.updateOne(data, id);
 
     return updatedEvent;
+  }
+
+  static async deleteEvent(id: string): Promise<EventModel[]> {
+    const deletedEvent = await EventsRepository.deleteOne(id);
+
+    return deletedEvent;
   }
 }

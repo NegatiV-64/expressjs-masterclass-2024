@@ -95,4 +95,18 @@ export class EventsRepository {
 
     return result;
   }
+
+  static async deleteOne(id: string): Promise<EventModel[]> {
+    const result = db.execute<EventModel>(
+      `
+        DELETE FROM
+            events
+        WHERE event_id = ?
+        RETURNING *
+    `,
+      [id],
+    );
+
+    return result;
+  }
 }

@@ -47,6 +47,10 @@ EventsController.get(
   async (req, res) => {
     const event = await EventsService.getEvent(req.params["eventId"] as string);
 
+    if (event.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
     return res.status(200).json({
       message: "Event retrieved successfully",
       data: event,
@@ -64,9 +68,33 @@ EventsController.patch(
       req.params["eventId"] as string,
     );
 
+    if (updatedEvent.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
     return res.status(200).json({
       message: "Event updated successfully",
       data: updatedEvent,
+    });
+  },
+);
+
+EventsController.delete(
+  "/:eventId",
+  validateIdRouteParameter(),
+  async (req, res) => {
+    const deletedEvent = await EventsService.deleteEvent(
+      req.params["eventId"] as string,
+    );
+
+    if (deletedEvent.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // the status code is 200 because with 204 I cannot return the deletedEvent and follow the task requirements
+    return res.status(200).json({
+      message: "Event deleted successfully",
+      data: deletedEvent,
     });
   },
 );
