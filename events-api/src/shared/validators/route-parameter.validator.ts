@@ -5,12 +5,12 @@ const idRouteParameterSchema = z
   .string()
   .uuid({ message: "ID is not a valid uuid" });
 
-export function validateIdRouteParameter() {
+export function validateIdRouteParameter(param: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const eventId = req.params["eventId"];
-      const parsedId = idRouteParameterSchema.parse(eventId);
-      req.params["eventId"] = parsedId;
+      const id = req.params[param];
+      const parsedId = idRouteParameterSchema.parse(id);
+      req.params[param] = parsedId;
       next();
     } catch (error) {
       if (error instanceof ZodError) {

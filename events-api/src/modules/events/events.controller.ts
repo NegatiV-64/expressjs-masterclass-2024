@@ -43,7 +43,7 @@ EventsController.post(
 
 EventsController.get(
   "/:eventId",
-  validateIdRouteParameter(),
+  validateIdRouteParameter("eventId"),
   async (req, res) => {
     const event = await EventsService.getEvent(req.params["eventId"] as string);
 
@@ -60,7 +60,7 @@ EventsController.get(
 
 EventsController.patch(
   "/:eventId",
-  validateIdRouteParameter(),
+  validateIdRouteParameter("eventId"),
   validateRequestBody(eventsUpdateRequestBodyDtoSchema),
   async (req, res) => {
     const updatedEvent = await EventsService.updateEvent(
@@ -81,7 +81,7 @@ EventsController.patch(
 
 EventsController.delete(
   "/:eventId",
-  validateIdRouteParameter(),
+  validateIdRouteParameter("eventId"),
   async (req, res) => {
     const deletedEvent = await EventsService.deleteEvent(
       req.params["eventId"] as string,
