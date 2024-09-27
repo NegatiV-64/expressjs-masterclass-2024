@@ -12,6 +12,7 @@ import { validateRouteParams } from "#/shared/validators/route-params.validator"
 import { eventsRouteParamsDtoSchema } from "./dto/requests/events-route-params.dto";
 import { TicketsService } from "../tickets/tickets.service";
 import { getIdParam } from "#/shared/utils";
+import { NotFoundError } from "#/shared/errors/notFoundError";
 
 export const EventsController = Router();
 
@@ -49,18 +50,21 @@ EventsController.patch(
   validateRouteParams(eventsRouteParamsDtoSchema),
   validateRequestBody(eventsUpdateDtoSchema),
   async (req, res) => {
-    const event = await EventsService.updateEvent(
-      req.body,
-      getIdParam(req.params)
-    );
-    if (event === null) {
-      return res.status(404).json({ message: "Event not found" });
-    }
+    try {
+      const event = await EventsService.updateEvent(
+        req.body,
+        getIdParam(req.params)
+      );
 
-    return res.status(200).json({
-      message: "Event updated successfully",
-      data: event,
-    });
+      return res.status(200).json({
+        message: "Event updated successfully",
+        data: event,
+      });
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return res.status(404).json({ message: err.message });
+      }
+    }
   }
 );
 
@@ -85,7 +89,7 @@ EventsController.get(
   validateRouteParams(eventsRouteParamsDtoSchema),
   async (req, res) => {
     const tickets = await EventsService.getTicketsForEvent(
-      req.params["id"] as string
+      getIdParam(req.params)
     );
 
     return res.status(200).json({

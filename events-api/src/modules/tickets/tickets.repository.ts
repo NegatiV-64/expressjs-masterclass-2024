@@ -5,7 +5,7 @@ import { TicketModel } from "./tickets.model";
 import { NotFoundError } from "#/shared/errors/notFoundError";
 
 export class TicketsRepository {
-  static async create(newTicket: TicketsCreateDto): Promise<TicketModel[]> {
+  static async create(newTicket: TicketsCreateDto): Promise<TicketModel> {
     const { eventId, ticketPrice, ticketQuantity } = newTicket;
 
     const res = await db.execute<TicketModel>(
@@ -17,10 +17,10 @@ export class TicketsRepository {
       [v4(), ticketQuantity, ticketPrice, eventId]
     );
 
-    return res;
+    return res[0] as TicketModel;
   }
 
-  static async getTicketById(id: string): Promise<TicketModel> {
+  static async getTicketById(id: string): Promise<TicketModel | TicketModel[]> {
     const result = await db.execute<TicketModel>(
       `
         SELECT
@@ -34,10 +34,10 @@ export class TicketsRepository {
       [id]
     );
 
-    if (result.length === 0) {
-      throw new NotFoundError(`Ticket with ID ${id} not found`);
+    if (result.length > 0) {
+      return result[0] as TicketModel;
     }
 
-    return result[0]!;
+    return result;
   }
 }

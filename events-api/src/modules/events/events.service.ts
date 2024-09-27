@@ -1,5 +1,6 @@
 import { EventModel } from "#/modules/events/events.model";
 import { EventsRepository } from "#/modules/events/events.repository";
+import { NotFoundError } from "#/shared/errors/notFoundError";
 import { TicketModel } from "../tickets/tickets.model";
 import { EventCreateDto } from "./dto/requests/events-create.dto";
 
@@ -17,12 +18,22 @@ export class EventsService {
   static async updateEvent(
     event: EventCreateDto,
     id: string
-  ): Promise<null | EventModel[]> {
-    return await EventsRepository.update(event, id);
+  ): Promise<EventModel | []> {
+    const res = await EventsRepository.update(event, id);
+
+    if (Array.isArray(res) && res.length === 0) {
+      throw new NotFoundError(`Event with ID ${id} not found`);
+    }
+
+    return res;
   }
 
-  static async deleteEvent(id: string): Promise<null | unknown> {
-    return await EventsRepository.delete(id);
+  static async deleteEvent(id: string): Promise<EventModel | EventModel[]> {
+    const res = await EventsRepository.delete(id);
+    if (Array.isArray(res) && res.length === 0) {
+      throw new NotFoundError(`Event with ID ${id} not found`);
+    }
+    return res;
   }
 
   static async getTicketsForEvent(id: string): Promise<TicketModel[]> {

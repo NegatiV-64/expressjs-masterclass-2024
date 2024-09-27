@@ -17,15 +17,11 @@ export class EventsRepository {
     return result;
   }
 
-  static async findById(id: string): Promise<EventModel[] | null> {
+  static async findById(id: string): Promise<EventModel[]> {
     const res = await db.execute<EventModel>(
       `SELECT ${eventColumns} FROM events WHERE event_id = ?`,
       [id]
     );
-
-    if (res.length === 0) {
-      return null;
-    }
 
     return res;
   }
@@ -53,11 +49,11 @@ export class EventsRepository {
   static async update(
     event: Partial<EventCreateDto>,
     id: string
-  ): Promise<EventModel[] | null> {
+  ): Promise<EventModel | []> {
     const res = await EventsRepository.findById(id);
 
-    if (res === null) {
-      return null;
+    if (res.length === 0) {
+      return [];
     }
 
     const values = Object.values(event);
@@ -66,9 +62,10 @@ export class EventsRepository {
       .map((key) => `${key} = ?`)
       .join(", ");
 
-    const sql = `UPDATE events SET ${setClause} WHERE event_id = ? RETURNING *`;
+    const sql = `UPDATE events SET ${setClause} WHERE event_id = ?`;
     await db.execute<EventModel>(sql, values);
-    return await db.execute<EventModel>(
+
+    const updatedEvent = await db.execute<EventModel>(
       `
         SELECT
           ${eventColumns}
@@ -76,13 +73,15 @@ export class EventsRepository {
       `,
       [id]
     );
+
+    return updatedEvent[0] as EventModel;
   }
 
-  static async delete(id: string): Promise<EventModel[] | null> {
+  static async delete(id: string): Promise<EventModel[] | EventModel> {
     const res = await EventsRepository.findById(id);
 
-    if (res === null) {
-      return null;
+    if (res.length === 0) {
+      return [];
     }
 
     await db.execute(`DELETE FROM tickets WHERE event_id = ?`, [id]);
@@ -98,7 +97,7 @@ export class EventsRepository {
     );
 
     await db.execute<EventModel>(`DELETE FROM events WHERE event_id = ?`, [id]);
-    return result;
+    return result[0] as EventModel;
   }
 
   static async getAllTickets(id: string): Promise<TicketModel[]> {
