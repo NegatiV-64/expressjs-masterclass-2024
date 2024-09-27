@@ -1,0 +1,27 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = "postgresql://postgres:%23Ismoil1705@localhost:5432/meraki"
+}
+
+model Event {
+    event_id          String    @id @default(uuid())
+    event_name        String
+    event_description String
+    event_location    String
+    event_date        DateTime
+    event_created_at  DateTime  @default(now())
+    event_updated_at  DateTime  @default(now())
+    Tickets           Tickets[]
+}
+
+model Tickets {
+    ticket_id       String @id @default(uuid())
+    ticket_quantity Int
+    ticket_price    Float
+    event_id        String
+    event           Event  @relation(fields: [event_id], references: [event_id])
+}
