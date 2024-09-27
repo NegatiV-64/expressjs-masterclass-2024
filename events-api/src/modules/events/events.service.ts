@@ -30,4 +30,13 @@ export class EventsService {
       throw new Error();
     }
   }
+  static async deleteEventById(eventId: string) {
+    try {
+      const result = await EventsRepository.deleteById(eventId);
+      return "Event deleted successfully!";
+    } catch (err) {
+      console.error("EventsServiceError: ", err);
+      throw new Error();
+    }
+  }
 }

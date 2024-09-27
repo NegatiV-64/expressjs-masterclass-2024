@@ -10,6 +10,8 @@ import {
   createEventDtoSchema,
 } from "./dto/request-validator-schemas/create-event.schema";
 import { CreateEventDto } from "./dto/create-event.dto";
+import { eventsDeleteParamsDtoSchema } from "./dto/request-validator-schemas/events-delete-params.schema";
+import { validateDeleteParams } from "#/shared/validators/delete-params.validator";
 import { UpdateEventDto } from "./dto/update-event.dto";
 
 export const EventsController = Router();
@@ -26,6 +28,35 @@ EventsController.get(
       message: "Events retrieved successfully",
       data: events,
       searchParams,
+    });
+  },
+);
+
+EventsController.post(
+  "/",
+  validateCreateEventsDto(createEventDtoSchema),
+  async (req, res) => {
+    const requestBody = req.body as unknown as CreateEventDto;
+
+    const result = await EventsService.createEvent(requestBody);
+
+    return res.status(201).json({
+      message: "Events created successfully",
+      data: result,
+    });
+  },
+);
+
+EventsController.delete(
+  "/:eventId",
+  validateDeleteParams(eventsDeleteParamsDtoSchema),
+  async (req, res) => {
+    const eventId = req.params["eventId"];
+    const result = await EventsService.deleteEventById(eventId as string);
+
+    return res.status(204).json({
+      message: result,
+      data: [],
     });
   },
 );

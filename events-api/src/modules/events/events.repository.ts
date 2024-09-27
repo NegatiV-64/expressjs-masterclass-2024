@@ -110,4 +110,18 @@ export class EventsRepository {
   }
 
 
+  static async deleteById(eventId: string) {
+    try {
+      const result = await db.execute<EventModel>(
+        `DELETE FROM events
+        WHERE event_id=?;`,
+        [eventId],
+      );
+      console.log("Delete event by id result: ", result);
+      return result;
+    } catch (err) {
+      console.error("EventRepositoryError: couldn't delete event by id: ", err);
+      throw new Error();
+    }
+  }
 }
