@@ -1,5 +1,7 @@
 import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
+import { randomUUID } from "crypto";
+import { eventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
@@ -15,6 +17,32 @@ export class EventsRepository {
         FROM
             events
     `);
+
+    return result;
+  }
+
+  static async createOne(
+    data: eventsCreateRequestBodyDto,
+  ): Promise<EventModel[]> {
+    const result = db.execute<EventModel>(
+      `
+        INSERT INTO events
+            (event_id, 
+            event_name,
+            event_description,
+            event_location,
+            event_date)
+        VALUES (?, ?, ?, ?, ?)
+        RETURNING *
+    `,
+      [
+        randomUUID(),
+        data.eventName,
+        data.eventDescription,
+        data.eventLocation,
+        data.eventDate,
+      ],
+    );
 
     return result;
   }

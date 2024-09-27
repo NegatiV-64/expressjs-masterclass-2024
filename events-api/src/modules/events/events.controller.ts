@@ -2,7 +2,9 @@ import {
   EventsSearchParamsDto,
   eventsSearchParamsDtoSchema,
 } from "#/modules/events/dto/requests/events-search-params.dto";
+import { eventsCreateRequestBodyDtoSchema } from "./dto/requests/events-create-request-body.dto";
 import { EventsService } from "#/modules/events/events.service";
+import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { validateSearchParams } from "#/shared/validators/search-params.validator";
 import { Router } from "express";
 
@@ -21,5 +23,15 @@ EventsController.get(
       data: events,
       searchParams,
     });
-  }
+  },
+);
+
+EventsController.post(
+  "/",
+  validateRequestBody(eventsCreateRequestBodyDtoSchema),
+  async (req, res) => {
+    const newEvent = await EventsService.createEvent(req.body);
+
+    return res.status(201).json(newEvent);
+  },
 );
