@@ -41,4 +41,12 @@ export class EventsService {
 
     return requestBody;
   }
+
+  static async deleteEvent(eventId: string){
+    const event = (await this.getEvents()).filter(event => event.eventId === eventId);
+    await EventsRepository.delete(eventId);
+    console.log(event);
+    
+    return event;
+  }
 }

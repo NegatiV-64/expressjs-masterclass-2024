@@ -44,5 +44,11 @@ export class EventsRepository {
     )
   }
 
+  static async delete(eventId: string): Promise<void> {
+    await db.execute(
+      `DELETE FROM events WHERE event_id = ?;`, [eventId]
+    )
+  }
+
 }
 
