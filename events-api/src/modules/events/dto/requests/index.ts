@@ -8,9 +8,19 @@ import {
     EventsSearchParamsDto
 } from "./events-search-params.dto";
 
+import {
+    eventsUpdateDtoSchema,
+    EventsUpdateDto
+} from "./events-update.dto";
+
+import { eventsIdDtoSchema } from "./events-id.dto";
+
 export {
     eventsSearchParamsDtoSchema,
     eventsCreateDtoSchema,
+    eventsUpdateDtoSchema,
+    eventsIdDtoSchema,
     EventsSearchParamsDto,
-    EventsCreateDto
+    EventsCreateDto,
+    EventsUpdateDto
 };

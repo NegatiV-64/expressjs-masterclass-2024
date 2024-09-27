@@ -1,12 +1,16 @@
 import {
     eventsCreateDtoSchema,
     EventsCreateDto,
+    EventsUpdateDto,
     EventsSearchParamsDto,
-    eventsSearchParamsDtoSchema
+    eventsSearchParamsDtoSchema,
+    eventsIdDtoSchema,
+    eventsUpdateDtoSchema
 } from "./dto/requests";
 import {
     validateSearchParams,
-    validateRequestBody
+    validateRequestBody,
+    validateQueryParameter
 } from "#/shared/validators";
 import { EventsService } from "#/modules/events/events.service";
 import { Router } from "express";
@@ -38,12 +42,55 @@ EventsController.post(
 
             const newEvent = await EventsService.createEvent(requestBody);
 
-            res.send(201).json({
+            return res.status(201).json({
                 message: "Event created successfully",
                 event: newEvent
             });
         } catch (error) {
-            res.send(404).json({ message: "Failed to create an event" });
+            return res
+                .status(404)
+                .json({ message: "Failed to create an event" });
+        }
+    }
+);
+
+EventsController.patch(
+    "/:eventId",
+    validateRequestBody(eventsUpdateDtoSchema),
+    validateQueryParameter("eventId", eventsIdDtoSchema),
+    async function (req, res) {
+        try {
+            const updatedEvent = await EventsService.updateEvent(
+                req.params["eventId"] || "",
+                req.body as unknown as EventsUpdateDto
+            );
+
+            res.status(200).json({
+                message: "Event updated successfully",
+                event: updatedEvent
+            });
+        } catch (error) {
+            res.status(400).json({ message: "Failed to update an event" });
+        }
+    }
+);
+
+EventsController.delete(
+    "/:eventId",
+    validateQueryParameter("eventId", eventsIdDtoSchema),
+    async function (req, res) {
+        try {
+            const deletedEvent = await EventsService.deleteEvent(
+                req.params["eventId"] || ""
+            );
+
+            res.status(204).json({
+                message: "Event deleted successfully",
+                event: deletedEvent
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: "Failed to delete an event" });
         }
     }
 );
