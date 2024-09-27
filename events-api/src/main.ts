@@ -5,8 +5,8 @@ import { Logger } from "#/shared/libs/logger.lib";
 async function main() {
   await db.init();
 
-  app.listen(9100, () => {
-    Logger.info(`Server is running on http://localhost:9100`);
+  app.listen(3002, () => {
+    Logger.info(`Server is running on http://localhost:3002`);
   });
 }
 
