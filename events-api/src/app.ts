@@ -1,3 +1,4 @@
+import { TicketsController } from './modules/tickets/tickets.controller';
 import express from "express";
 import cors from "cors";
 import { loggerMiddleware } from "#/shared/middlewares/logger.middleware";
@@ -20,6 +21,7 @@ app.use(loggerMiddleware);
 
 // ==== Routes ==== //
 app.use("/events", EventsController);
+app.use("/tickets", TicketsController);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
