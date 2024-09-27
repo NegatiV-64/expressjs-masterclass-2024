@@ -5,14 +5,17 @@ import { Router } from "express";
 import {
   EventsSearchParamsDto,
   eventsSearchParamsDtoSchema,
-} from "./dto/request-validator-schemas/events-search-params.schema";
+} from "./request-validator-schemas/events-search-params.schema";
 import {
   createEventDtoSchema,
-} from "./dto/request-validator-schemas/create-event.schema";
+} from "./request-validator-schemas/create-event.schema";
 import { CreateEventDto } from "./dto/create-event.dto";
-import { eventsDeleteParamsDtoSchema } from "./dto/request-validator-schemas/events-delete-params.schema";
+import { eventsDeleteParamsDtoSchema } from "./request-validator-schemas/events-delete-params.schema";
 import { validateDeleteParams } from "#/shared/validators/event-validators/delete-params.validator";
 import { UpdateEventDto } from "./dto/update-event.dto";
+import { validateEventId } from "#/shared/validators/event-validators/validate-eventId.validator";
+import { eventsEventIdDtoSchema } from "./request-validator-schemas/events-eventId.schema";
+import { TicketsService } from "../tickets/tickets.service";
 
 export const EventsController = Router();
 
@@ -31,6 +34,23 @@ EventsController.get(
     });
   },
 );
+
+EventsController.get("/:eventId/tickets", validateEventId(eventsEventIdDtoSchema), async (req, res) => {
+  const eventId = req.params["eventId"]!;
+
+  const tickets = await TicketsService.getTicketsByEventId(eventId);
+  if (!tickets) {
+    return res.status(404).json({
+      message: "Tickets not found",
+    });
+  }
+
+  return res.status(200).json({
+    message: "Tickets retrieved successfully",
+    data: tickets,
+  });
+
+})
 
 EventsController.post(
   "/",
