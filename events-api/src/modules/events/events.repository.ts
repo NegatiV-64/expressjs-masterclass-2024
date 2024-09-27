@@ -86,7 +86,8 @@ export class EventsRepository {
 
   static async getById(eventId: string): Promise<EventModel | undefined> {
     try {
-      const result = await db.execute<EventModel>(`
+      const result = await db.execute<EventModel>(
+        `
         SELECT
             event_id as eventId,
             event_name as eventName,
@@ -99,16 +100,16 @@ export class EventsRepository {
             events
         WHERE
             event_id = ?
-    `, [eventId]);
+    `,
+        [eventId],
+      );
 
       return result[0];
-
     } catch (err) {
       console.error("EventRepositoryError: couldn't get event by id!", err);
       throw new Error();
     }
   }
-
 
   static async deleteById(eventId: string) {
     try {
@@ -117,7 +118,6 @@ export class EventsRepository {
         WHERE event_id=?;`,
         [eventId],
       );
-      console.log("Delete event by id result: ", result);
       return result;
     } catch (err) {
       console.error("EventRepositoryError: couldn't delete event by id: ", err);

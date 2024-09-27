@@ -6,9 +6,7 @@ import {
   EventsSearchParamsDto,
   eventsSearchParamsDtoSchema,
 } from "./request-validator-schemas/events-search-params.schema";
-import {
-  createEventDtoSchema,
-} from "./request-validator-schemas/create-event.schema";
+import { createEventDtoSchema } from "./request-validator-schemas/create-event.schema";
 import { CreateEventDto } from "./dto/create-event.dto";
 import { eventsDeleteParamsDtoSchema } from "./request-validator-schemas/events-delete-params.schema";
 import { validateDeleteParams } from "#/shared/validators/event-validators/delete-params.validator";
@@ -35,22 +33,25 @@ EventsController.get(
   },
 );
 
-EventsController.get("/:eventId/tickets", validateEventId(eventsEventIdDtoSchema), async (req, res) => {
-  const eventId = req.params["eventId"]!;
+EventsController.get(
+  "/:eventId/tickets",
+  validateEventId(eventsEventIdDtoSchema),
+  async (req, res) => {
+    const eventId = req.params["eventId"]!;
 
-  const tickets = await TicketsService.getTicketsByEventId(eventId);
-  if (!tickets) {
-    return res.status(404).json({
-      message: "Tickets not found",
+    const tickets = await TicketsService.getTicketsByEventId(eventId);
+    if (!tickets) {
+      return res.status(404).json({
+        message: "Tickets not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tickets retrieved successfully",
+      data: tickets,
     });
-  }
-
-  return res.status(200).json({
-    message: "Tickets retrieved successfully",
-    data: tickets,
-  });
-
-})
+  },
+);
 
 EventsController.post(
   "/",
@@ -101,12 +102,10 @@ EventsController.put("/:eventId", async (req, res) => {
 
   const requestBody = req.body as unknown as UpdateEventDto;
 
-  console.log("Update event: ", requestBody);
-
   const result = await EventsService.updateEventById(eventId, requestBody);
 
   return res.status(200).json({
     message: "Events updated successfully",
     data: result,
   });
-})
+});
