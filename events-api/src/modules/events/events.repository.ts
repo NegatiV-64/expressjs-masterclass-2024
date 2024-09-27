@@ -2,6 +2,7 @@ import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
 import { faker } from "@faker-js/faker";
 import { CreateEventDto } from "./dto/create-event.dto";
+import { UpdateEventDto } from "./dto/update-event.dto";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
@@ -48,6 +49,66 @@ export class EventsRepository {
       throw new Error();
     }
   }
+
+  static async update(
+    eventId: string,
+    updatedEvent: UpdateEventDto,
+  ): Promise<string> {
+    try {
+      const event = await EventsRepository.getById(eventId);
+      await db.execute<EventModel>(
+        `UPDATE events
+         SET
+            event_name = ?,
+            event_description = ?,
+            event_location = ?,
+            event_date = ?
+         WHERE
+            event_id = ?;`,
+        [
+          updatedEvent.eventName || event.eventName,
+          updatedEvent.eventDescription || event.eventDescription,
+          updatedEvent.eventLocation || event.eventLocation,
+          new Date((updatedEvent.eventDate) || event.eventDate)
+            .toISOString()
+            .replace("T", " ")
+            .replace("Z", ""),
+          eventId || event.eventId,
+        ],
+      );
+
+      return "ok";
+    } catch (err) {
+      console.error("EventRepositoryError: couldn't update event!", err);
+      throw new Error();
+    }
+  }
+
+  static async getById(eventId: string): Promise<EventModel> {
+    try {
+      const result = await db.execute<EventModel>(`
+        SELECT
+            event_id as eventId,
+            event_name as eventName,
+            event_description as eventDescription,
+            event_location as eventLocation,
+            event_date as eventDate,
+            event_created_at as eventCreatedAt,
+            event_updated_at as eventUpdatedAt
+        FROM
+            events
+        WHERE
+            event_id = ?
+    `, [eventId]);
+
+      return result[0]!;
+
+    } catch (err) {
+      console.error("EventRepositoryError: couldn't get event by id!", err);
+      throw new Error();
+    }
+  }
+
 
   static async deleteById(eventId: string) {
     try {
