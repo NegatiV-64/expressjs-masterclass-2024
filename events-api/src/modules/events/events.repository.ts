@@ -2,6 +2,7 @@ import { db } from "#/database/database";
 import { EventModel, RequestEventModel } from "#/modules/events/events.model";
 import { formatDateTime } from "#/shared/utils/format-datetime.util";
 import { v4 as uuidv4 } from "uuid";
+import { TicketModel } from "../tickets/tickets.model";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
@@ -17,6 +18,26 @@ export class EventsRepository {
         FROM
             events
     `);
+
+    return result;
+  }
+
+  static async getOne(eventId: string): Promise<EventModel[]> {
+    const result = db.execute<EventModel>(
+      `
+        SELECT
+            event_id as eventId,
+            event_name as eventName,
+            event_description as eventDescription,
+            event_location as eventLocation,
+            event_date as eventDate,
+            event_created_at as eventCreatedAt,
+            event_updated_at as eventUpdatedAt
+        FROM
+            events
+        WHERE event_id = ?`,
+      [eventId]
+    );
 
     return result;
   }
@@ -118,6 +139,37 @@ export class EventsRepository {
     );
 
     if (result.length === 0) throw new Error("Event not found");
+
+    return result;
+  }
+
+  static async getTickets(eventId: string): Promise<TicketModel[]> {
+    const event = await db.execute(
+      `
+        SELECT event_id
+        FROM events
+        WHERE event_id = ?;
+      `,
+      [eventId]
+    );
+
+    if (event.length === 0) {
+      throw new Error("Event not found");
+    }
+
+    const result = await db.execute<TicketModel>(
+      `
+        SELECT
+          ticket_id as ticketId,
+          ticket_quantity as ticketQuantity,
+          ticket_price as ticketPrice,
+          event_id as eventId
+        FROM
+          tickets
+        WHERE
+          event_id = ?`,
+      [eventId]
+    );
 
     return result;
   }

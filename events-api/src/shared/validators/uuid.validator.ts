@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
-export function validateUUID() {
+export function validateUUID(paramName: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     const uuidRegex =
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-    const eventId = req.params["eventId"];
+    const eventId = req.params[paramName];
 
     if (eventId && uuidRegex.test(eventId)) {
       next();

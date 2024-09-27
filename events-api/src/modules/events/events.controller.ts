@@ -49,7 +49,7 @@ EventsController.post(
 
 EventsController.patch(
   "/:eventId",
-  validateUUID(),
+  validateUUID("eventId"),
   validateRequestBody(eventsUpdateBodyDtoSchema),
   async (req, res) => {
     try {
@@ -64,6 +64,25 @@ EventsController.patch(
         updatedEvent: updatedEvent,
       });
     } catch {
+      res.status(404).json({
+        message: "Event not found",
+      });
+    }
+  }
+);
+
+EventsController.delete(
+  "/:eventId",
+  validateUUID("eventId"),
+  async (req, res) => {
+    try {
+      const eventId = req.params["eventId"];
+      const deletedEvent = await EventsService.deleteEvent(eventId as string);
+      res.status(204).json({
+        message: "Event deleted successfully",
+        deletedEvent: deletedEvent, // I found out code 204 does not send response body
+      });
+    } catch {
       return res.status(404).json({
         message: "Event not found",
       });
@@ -71,17 +90,21 @@ EventsController.patch(
   }
 );
 
-EventsController.delete("/:eventId", validateUUID(), async (req, res) => {
-  try {
-    const eventId = req.params["eventId"];
-    const deletedEvent = await EventsService.deleteEvent(eventId as string);
-    res.status(204).json({
-      message: "Event deleted successfully",
-      deletedEvent: deletedEvent, // I found out code 204 does not send response body
-    });
-  } catch {
-    return res.status(404).json({
-      message: "Event not found",
-    });
+EventsController.get(
+  "/:eventId/tickets",
+  validateUUID("eventId"),
+  async (req, res) => {
+    try {
+      const eventId = req.params["eventId"] as string;
+      const tickets = await EventsService.getTicketsOfEvent(eventId);
+      res.status(200).json({
+        message: "Tickets for the given event retrieved successfully",
+        data: tickets,
+      });
+    } catch {
+      return res.status(404).json({
+        message: "Event not found",
+      });
+    }
   }
-});
+);
