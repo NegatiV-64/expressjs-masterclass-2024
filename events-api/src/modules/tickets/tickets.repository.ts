@@ -2,13 +2,18 @@ import { db } from "#/database/database";
 import { TicketModel } from "./tickets.model";
 
 export class TicketsRepository {
-  static async getAll(): Promise<TicketModel[]> {
+  static async getTicketsByEventId(eventId: string): Promise<TicketModel[]> {
     const result = db.execute<TicketModel>(`
         SELECT
-            event_id as eventId,
+          ticket_id as ticketId,
+          ticket_quantity as ticketQuantity,
+          ticket_price as ticketPrice,
+          event_id as eventId
         FROM
-            tickets
-    `);
+          tickets
+        WHERE 
+          event_id = ?;`, [eventId]
+    );
 
     return result;
   }

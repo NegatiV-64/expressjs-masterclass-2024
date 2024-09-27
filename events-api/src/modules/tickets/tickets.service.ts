@@ -4,12 +4,6 @@ import { TicketModel } from "./tickets.model";
 import { TicketsRepository } from "./tickets.repository";
 
 export class TicketsService {
-    static async getEvents(): Promise<void> {
-        // const events = await EventsRepository.getAll();
-
-        // return events;
-    }
-
     static async newTicket(ticket: TicketsBodyDataDto): Promise<TicketModel> {
         const newEvent: TicketModel = {
             ticketId: faker.string.uuid(),
@@ -21,5 +15,10 @@ export class TicketsService {
         await TicketsRepository.insert(newEvent);
 
         return newEvent;
+    }
+
+    static async getEventTickets(eventId: string): Promise<TicketModel[]> {
+        const events = await TicketsRepository.getTicketsByEventId(eventId);
+        return events;
     }
 }

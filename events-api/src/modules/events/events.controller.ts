@@ -5,7 +5,8 @@ import { validateSearchParams } from "#/shared/validators/search-params.validato
 import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { eventIDSchema, EventsUpdateDto, eventsUpdateDtoSchema } from "./dto/requests/events-update-data.dto";
 import { Router } from "express";
-import { z } from "zod";
+import { z, ZodError } from "zod";
+import { TicketsService } from "../tickets/tickets.service";
 
 export const EventsController = Router();
 
@@ -73,6 +74,36 @@ EventsController.delete(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid UUID", errors: error.errors });
       }
+    }
+  }
+);
+
+EventsController.get(
+  "/:eventId/tickets",
+  async (req, res) => {
+    try {
+      const eventID = eventIDSchema.parse(req.params['eventId']) as string;
+
+      const tickets = await TicketsService.getEventTickets(eventID);
+
+      return res.status(200).json({
+        message: "Tickets retrieved successfully",
+        data: tickets
+      });
+      
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const errorMessages = error.errors.map((error) => error.message);
+
+        return res.status(400).json({
+          message: "Bad Request",
+          errors: errorMessages,
+        });
+      }
+
+      return res.status(400).json({
+        message: "Bad Request"
+      });
     }
   }
 );
