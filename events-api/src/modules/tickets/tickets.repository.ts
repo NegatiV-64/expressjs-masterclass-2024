@@ -1,4 +1,6 @@
 import { db } from "#/database/database";
+import { faker } from "@faker-js/faker";
+import { CreateTicketDto } from "./dto/create-ticket.dto";
 import { TicketModel } from "./tickets.model";
 
 export class TicketsRepository {
@@ -12,6 +14,28 @@ export class TicketsRepository {
             return result;
         } catch (err) {
             console.error("TicketsRepositoryError: couldn't get all tickets: ", err);
+            throw new Error();
+        }
+    }
+
+    static async create(ticket: CreateTicketDto) {
+        try {
+            const result = await db.execute<TicketModel>(`
+                INSERT INTO tickets (ticket_id, ticket_quantity, ticket_price, event_id)
+                VALUES (?, ?, ?, ?)
+                RETURNING ticket_id as ticketId, ticket_quantity as ticketQuantity, ticket_price as ticketPrice, event_id as ticketEventId,
+                ticket_created_at as ticketCreatedAt, ticket_updated_at as ticketUpdatedAt;`,
+                [
+                    faker.string.uuid(),
+                    ticket.ticketQuantity,
+                    ticket.ticketPrice,
+                    ticket.eventId
+                ]);
+
+            return result[0];
+
+        } catch (err) {
+            console.error("TicketsRepositoryError: couldn't create ticket: ", err);
             throw new Error();
         }
     }
