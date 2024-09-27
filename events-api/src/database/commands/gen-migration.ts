@@ -36,4 +36,4 @@ async function bootstrap() {
   await generateMigration(migrationName);
 }
 
-bootstrap()
+bootstrap();
