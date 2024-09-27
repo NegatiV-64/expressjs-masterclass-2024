@@ -11,6 +11,11 @@ export class EventsService {
     return events;
   }
 
+  static async getEventByID(eventId: string){
+    const event = (await this.getEvents()).filter(event => event.eventId === eventId);    
+    return event;
+  }
+
   static async newEvent(eventData: EventsBodyDataDto): Promise<EventModel> {
     const newEvent: EventModel = {
       eventId: faker.string.uuid(),
@@ -43,10 +48,8 @@ export class EventsService {
   }
 
   static async deleteEvent(eventId: string){
-    const event = (await this.getEvents()).filter(event => event.eventId === eventId);
-    await EventsRepository.delete(eventId);
-    console.log(event);
-    
+    const event = await this.getEventByID(eventId);
+    await EventsRepository.delete(eventId);    
     return event;
   }
 }
