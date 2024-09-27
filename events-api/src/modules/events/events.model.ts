@@ -8,5 +8,5 @@ export interface EventModel {
   eventUpdatedAt: string;
 }
 
-export interface RequestEventModel
+export interface NewEvent
   extends Omit<EventModel, "eventId" | "eventCreatedAt" | "eventUpdatedAt"> {}

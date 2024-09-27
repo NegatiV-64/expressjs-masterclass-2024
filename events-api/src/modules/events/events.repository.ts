@@ -1,5 +1,5 @@
 import { db } from "#/database/database";
-import { EventModel, RequestEventModel } from "#/modules/events/events.model";
+import { EventModel, NewEvent } from "#/modules/events/events.model";
 import { formatDateTime } from "#/shared/utils/format-datetime.util";
 import { v4 as uuidv4 } from "uuid";
 import { TicketModel } from "../tickets/tickets.model";
@@ -42,7 +42,7 @@ export class EventsRepository {
     return result;
   }
 
-  static async create(eventData: RequestEventModel): Promise<EventModel[]> {
+  static async create(eventData: NewEvent): Promise<EventModel[]> {
     const id = uuidv4();
 
     const result = db.execute<EventModel>(
@@ -72,7 +72,7 @@ export class EventsRepository {
 
   static async update(
     eventId: string,
-    newData: Partial<RequestEventModel>
+    newData: Partial<NewEvent>
   ): Promise<EventModel> {
     const oldData = await db.execute<EventModel>(
       `

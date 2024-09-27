@@ -1,4 +1,4 @@
-import { EventModel, RequestEventModel } from "#/modules/events/events.model";
+import { EventModel, NewEvent } from "#/modules/events/events.model";
 import { EventsRepository } from "#/modules/events/events.repository";
 import { TicketModel } from "../tickets/tickets.model";
 
@@ -15,9 +15,7 @@ export class EventsService {
     return events;
   }
 
-  static async createEvent(
-    eventData: RequestEventModel
-  ): Promise<EventModel[]> {
+  static async createEvent(eventData: NewEvent): Promise<EventModel[]> {
     const newEvent = await EventsRepository.create(eventData);
 
     return newEvent;
@@ -25,7 +23,7 @@ export class EventsService {
 
   static async updateEvent(
     eventId: string,
-    newData: Partial<RequestEventModel>
+    newData: Partial<NewEvent>
   ): Promise<EventModel> {
     const updatedEventEvent = await EventsRepository.update(eventId, newData);
 
