@@ -5,6 +5,7 @@ import { EventsService } from "#/modules/events/events.service";
 import { validateRouteParams } from "#/shared/validators/route-params.validator";
 import { validateRequestBody } from "#/shared/validators/request-body.validator";
 import { Router } from "express";
+import { TicketsService } from '../tickets/tickets.service';
 
 export const EventsController = Router();
 
@@ -87,3 +88,23 @@ EventsController.delete(
     });
   }
 );
+
+EventsController.get(
+  "/:id/tickets",
+  validateRouteParams(eventsRouteParamsDtoSchema),
+  async (req, res) => {
+  const routeParams = req.params as unknown as EventsRouteParamsDto;
+
+  const tickets = await TicketsService.getTicketsByEventId(routeParams.id);
+  if (!tickets) {
+    return res.status(404).json({
+      message: "Tickets not found",
+    });
+  }
+
+  return res.status(200).json({
+    message: "Tickets retrieved successfully",
+    data: tickets,
+  });
+
+})

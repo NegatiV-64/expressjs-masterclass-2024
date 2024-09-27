@@ -40,4 +40,15 @@ export class TicketsRepository {
 
     return result
   }
+
+  static async getTicketsByEventId(eventId: string): Promise<TicketsModel[]> {
+    const result = await db.execute<TicketsModel>(`
+      SELECT ticket_id as ticketId, ticket_quantity as ticketQuantity, ticket_price as ticketPrice, event_id as ticketEventId,
+      ticket_created_at as ticketCreatedAt, ticket_updated_at as ticketUpdatedAt
+      FROM tickets
+      WHERE event_id = ?;`,
+    [eventId]);
+
+    return result;
+  }
 }
