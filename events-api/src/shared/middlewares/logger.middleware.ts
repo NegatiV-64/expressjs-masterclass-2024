@@ -2,11 +2,11 @@ import { Logger } from "#/shared/libs/logger.lib";
 import { NextFunction, Request, Response } from "express";
 
 export function loggerMiddleware(
-  req: Request,
-  _res: Response,
-  next: NextFunction
+    req: Request,
+    _res: Response,
+    next: NextFunction
 ) {
-  Logger.info(`[${new Date().toISOString()}] ${req.method}: ${req.url}`);
+    Logger.info(`[${new Date().toISOString()}] ${req.method}: ${req.url}`);
 
-  next();
+    next();
 }

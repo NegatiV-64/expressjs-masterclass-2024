@@ -2,8 +2,8 @@ import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
 
 export class EventsRepository {
-  static async getAll(): Promise<EventModel[]> {
-    const result = db.execute<EventModel>(`
+    static async getAll(): Promise<EventModel[]> {
+        const result = db.execute<EventModel>(`
         SELECT
             event_id as eventId,
             event_name as eventName,
@@ -16,6 +16,6 @@ export class EventsRepository {
             events
     `);
 
-    return result;
-  }
+        return result;
+    }
 }
