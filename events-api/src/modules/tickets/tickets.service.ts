@@ -1,3 +1,4 @@
+import { EventsService } from "../events/events.service";
 import { CreateTicketDto } from "./dto/create-ticket.dto";
 import { TicketModel } from "./tickets.model";
 import { TicketsRepository } from "./tickets.repository";
