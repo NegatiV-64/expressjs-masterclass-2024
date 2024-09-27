@@ -23,3 +23,5 @@ EventsController.get(
     });
   }
 );
+
+"hello"
