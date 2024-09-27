@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { eventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
 import { eventsUpdateRequestBodyDto } from "./dto/requests/events-update-request-body.dto";
 import { convertCamelToSnakeCase } from "#/shared/utils/convertCamelToSnakeCase";
+import { TicketModel } from "../tickets/tickets.model";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
@@ -103,6 +104,24 @@ export class EventsRepository {
             events
         WHERE event_id = ?
         RETURNING *
+    `,
+      [id],
+    );
+
+    return result;
+  }
+
+  static async getAllTickets(id: string): Promise<TicketModel[]> {
+    const result = db.execute<TicketModel>(
+      `
+        SELECT
+            ticket_id as ticketId,
+            ticket_quantity as ticketQuantity,
+            ticket_price as ticketPrice,
+            event_id as eventId
+        FROM
+            tickets
+        WHERE event_id = ?
     `,
       [id],
     );

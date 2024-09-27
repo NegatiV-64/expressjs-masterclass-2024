@@ -98,3 +98,24 @@ EventsController.delete(
     });
   },
 );
+
+EventsController.get(
+  "/:eventId/tickets",
+  validateIdRouteParameter("eventId"),
+  async (req, res) => {
+    const tickets = await EventsService.getTickets(
+      req.params["eventId"] as string,
+    );
+
+    if (tickets === null) {
+      res.status(400).json({
+        message: "Event with that id does not exist",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tickets retrieved successfully",
+      data: tickets,
+    });
+  },
+);
