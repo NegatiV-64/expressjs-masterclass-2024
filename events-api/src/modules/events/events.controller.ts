@@ -1,3 +1,5 @@
+import { Router } from "express";
+import { EventsService } from "#/modules/events/events.service";
 import {
     eventsCreateDtoSchema,
     EventsCreateDto,
@@ -12,8 +14,6 @@ import {
     validateRequestBody,
     validateQueryParameter
 } from "#/shared/validators";
-import { EventsService } from "#/modules/events/events.service";
-import { Router } from "express";
 
 export const EventsController = Router();
 
@@ -109,7 +109,6 @@ EventsController.get(
                 data: tickets
             });
         } catch (error) {
-            console.log(error);
             res.status(400).json({
                 message: "Failed To Fetch Event Tickets"
             });
