@@ -1,17 +1,15 @@
-import { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
+import { Request, Response, NextFunction } from "express";
 
-export function validateRequestBody(schema: z.ZodObject<any, any>) {
+export function validateRouteParams(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
-            const reqBody = req.body;
-            const parsedBody = schema.parse(reqBody);
-            req.body = parsedBody;
+            const parsedValues = schema.parse(req.params);
+            req.params = parsedValues;
             next();
         } catch (error) {
             if (error instanceof ZodError) {
                 const errorMessages = error.errors.map((error) => error.message);
-
                 return res.status(400).json({
                     message: "Bad Request",
                     errors: errorMessages,
@@ -20,7 +18,7 @@ export function validateRequestBody(schema: z.ZodObject<any, any>) {
 
             return res.status(400).json({
                 message: "Bad Request",
-                errors: ["Invalid body params"],
+                errors: ["Invalid route params"],
             });
         }
     };
