@@ -1,5 +1,6 @@
 import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
+import { TicketModel } from "#/modules/tickets/tickets.model";
 import { EventsCreateDto, EventsUpdateDto } from "./dto/requests";
 import { v4 as uuid } from "uuid";
 import { convertToSnakeCase } from "#/shared/utils";
@@ -101,10 +102,39 @@ export class EventsRepository {
             throw new Error("Event Not Found");
         }
 
-        const query = `DELETE FROM events WHERE event_id = ? RETURNING *`;
-        await db.execute<EventModel>(query, [eventId]);
+        await db.execute<EventModel>(
+            `
+            DELETE FROM events 
+            WHERE event_id = ? 
+            RETURNING *
+            `,
+            [eventId]
+        );
 
         return deletedEvent;
+    }
+
+    static async getEventTickets(eventId: string): Promise<TicketModel[]> {
+        const event = await EventsRepository.getEvent(eventId);
+
+        if (!event.length) {
+            throw new Error("Event Not Found");
+        }
+
+        const result = db.execute<TicketModel>(
+            `
+            SELECT
+                ticket_id as ticketId,
+                ticket_quantity as ticketQuantity,
+                ticket_price as ticketPrice,
+                event_id as eventId
+            FROM tickets
+            WHERE event_id = ?
+            `,
+            [eventId]
+        );
+
+        return result;
     }
 
     static aliases = `

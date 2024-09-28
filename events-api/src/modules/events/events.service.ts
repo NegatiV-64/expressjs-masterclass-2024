@@ -1,4 +1,5 @@
 import { EventModel } from "#/modules/events/events.model";
+import { TicketModel } from "#/modules/tickets/tickets.model";
 import { EventsRepository } from "#/modules/events/events.repository";
 import { EventsCreateDto, EventsUpdateDto } from "./dto/requests";
 
@@ -20,5 +21,9 @@ export class EventsService {
 
     static deleteEvent(eventId: string): Promise<EventModel[]> {
         return EventsRepository.deleteEvent(eventId);
+    }
+
+    static getEventTickets(eventId: string): Promise<TicketModel[]> {
+        return EventsRepository.getEventTickets(eventId);
     }
 }

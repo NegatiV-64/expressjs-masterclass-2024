@@ -94,3 +94,25 @@ EventsController.delete(
         }
     }
 );
+
+EventsController.get(
+    "/:eventId/tickets",
+    validateQueryParameter("eventId", eventsIdDtoSchema),
+    async function (req, res) {
+        try {
+            const tickets = await EventsService.getEventTickets(
+                req.params["eventId"] || ""
+            );
+
+            return res.status(200).json({
+                message: "Tickets Fetched Successfully",
+                data: tickets
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: "Failed To Fetch Event Tickets"
+            });
+        }
+    }
+);
