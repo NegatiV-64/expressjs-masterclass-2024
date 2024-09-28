@@ -84,12 +84,12 @@ EventsController.delete(
                 req.params["eventId"] || ""
             );
 
-            res.status(204).json({
+            // can't return the payload with 204 code..
+            res.status(200).json({
                 message: "Event deleted successfully",
                 event: deletedEvent
             });
         } catch (error) {
-            console.log(error);
             res.status(400).json({ message: "Failed to delete an event" });
         }
     }
