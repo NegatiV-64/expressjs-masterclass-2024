@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { z, ZodError } from "zod";
+import { z } from "zod";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { parseSchemaError } from "#/shared/utils";
 
 export function validateSearchParams(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -9,19 +11,17 @@ export function validateSearchParams(schema: z.ZodObject<any, any>) {
       req.query = parsedValues;
       next();
     } catch (error) {
-      if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((error) => error.message);
+      const errorData = parseSchemaError(error);
 
-        return res.status(400).json({
-          message: "Bad Request",
-          errors: errorMessages,
-        });
-      }
-
-      return res.status(400).json({
-        message: "Bad Request",
-        errors: ["Invalid search params"],
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: ReasonPhrases.BAD_GATEWAY,
+        description: "Invalid search params",
+        fields: errorData,
       });
     }
   };
+}
+
+export function getSearchParams<T>(req: Request): T {
+  return req.query as T;
 }
