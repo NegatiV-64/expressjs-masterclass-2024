@@ -1,6 +1,1 @@
-import {
-    ticketsCreateDtoSchema,
-    TicketsCreateDto
-} from "./tickets-create.dto";
-
-export { ticketsCreateDtoSchema, TicketsCreateDto };
+export * from "./tickets-create.dto";
