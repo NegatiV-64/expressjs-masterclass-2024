@@ -23,6 +23,7 @@ EventsController.get(
     async (req, res) => {
         const searchParams = req.query as unknown as EventsSearchParamsDto;
 
+        //
         const events = await EventsService.getEvents();
 
         return res.status(200).json({
@@ -84,7 +85,6 @@ EventsController.delete(
                 req.params["eventId"] || ""
             );
 
-            // can't return the payload with 204 code..
             res.status(200).json({
                 message: "Event deleted successfully",
                 event: deletedEvent
