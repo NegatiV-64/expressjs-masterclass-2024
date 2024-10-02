@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { TicketsService } from "./tickets.service";
-import { ticketsCreateDtoSchema, TicketsCreateDto } from "./dto/requests";
-import { eventsIdDtoSchema } from "../events/dto/requests";
+import { ticketsCreateDtoSchema } from "./dto/requests";
+import { ticketsIdDtoSchema } from "./dto/requests";
 import {
     validateRequestBody,
     validateQueryParameter
 } from "#/shared/validators";
+import { NotFoundError } from "#/shared/errors";
 
 export const TicketsController = Router();
 
@@ -14,16 +15,14 @@ TicketsController.post(
     validateRequestBody(ticketsCreateDtoSchema),
     async (req, res) => {
         try {
-            const newTicket = await TicketsService.createTicket(
-                req.body as unknown as TicketsCreateDto
-            );
+            const newTicket = await TicketsService.createTicket(req.body);
 
             res.status(201).json({
                 message: "Ticket Created Successfully",
                 data: newTicket
             });
-        } catch (error) {
-            res.status(400).json({
+        } catch {
+            res.status(500).json({
                 message: "Failed To Create Ticket"
             });
         }
@@ -32,19 +31,30 @@ TicketsController.post(
 
 TicketsController.get(
     "/:ticketId",
-    validateQueryParameter("ticketId", eventsIdDtoSchema),
+    validateQueryParameter(ticketsIdDtoSchema),
     async function (req, res) {
         try {
-            const ticket = await TicketsService.getTicket(
-                req.params["ticketId"] || ""
-            );
+            const ticketId = req.params["ticketId"];
+            if (!ticketId) {
+                throw new NotFoundError(
+                    "Missing Query Parameter for Ticket ID"
+                );
+            }
+
+            const ticket = await TicketsService.getTicket(ticketId);
 
             return res.status(200).json({
                 message: "Ticket Fetched Successfully",
                 data: ticket
             });
         } catch (error) {
-            res.status(400).json({
+            if (error instanceof NotFoundError) {
+                return res.status(400).json({
+                    message: error.message
+                });
+            }
+
+            res.status(500).json({
                 message: "Failed To Fetch Ticket"
             });
         }

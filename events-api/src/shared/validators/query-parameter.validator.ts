@@ -1,15 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
 
-export function validateQueryParameter(
-    param: string,
-    schema: z.ZodString
-) {
+export function validateQueryParameter(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
-            const val = req.params[param];
-            const parsedValue = schema.parse(val);
-            req.params[param] = parsedValue;
+            const parsedValue = schema.parse(req.params);
+            req.params = parsedValue;
 
             next();
         } catch (error) {
