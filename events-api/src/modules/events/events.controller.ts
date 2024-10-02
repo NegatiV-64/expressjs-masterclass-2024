@@ -42,7 +42,7 @@ EventsController.post(
                 message: "Event created successfully",
                 event: newEvent
             });
-        } catch (error) {
+        } catch {
             return res
                 .status(500)
                 .json({ message: "Failed to create an event" });

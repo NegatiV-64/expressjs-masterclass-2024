@@ -1,4 +1,5 @@
 import { db } from "#/database/database";
+import { NotFoundError } from "#/shared/errors";
 import { TicketsCreateDto } from "./dto/requests";
 import { TicketModel } from "./tickets.model";
 import { v4 as uuid } from "uuid";
@@ -6,11 +7,11 @@ import { v4 as uuid } from "uuid";
 export class TicketsRepository {
     static async createTicket(
         ticket: TicketsCreateDto
-    ): Promise<TicketModel[]> {
+    ): Promise<TicketModel> {
         const { ticketQuantity, ticketPrice, eventId } = ticket;
         const ticketId = uuid();
 
-        const result = db.execute<TicketModel>(
+        const result = await db.execute<TicketModel>(
             `
             INSERT INTO tickets (
                 ticket_id,
@@ -19,16 +20,20 @@ export class TicketsRepository {
                 event_id
             )
             VALUES (?, ?, ?, ?)
-            RETURNING *
+            RETURNING ${this.aliases}
             `,
             [ticketId, ticketQuantity, ticketPrice, eventId]
         );
 
-        return result;
+        if (!result[0]) {
+            throw new NotFoundError("Interal Server Error");
+        }
+
+        return result[0];
     }
 
-    static async getTicket(ticketId: string): Promise<TicketModel[]> {
-        const result = db.execute<TicketModel>(
+    static async getTicket(ticketId: string): Promise<TicketModel> {
+        const result = await db.execute<TicketModel>(
             `
             SELECT
                 ticket_id as ticketId,
@@ -49,6 +54,17 @@ export class TicketsRepository {
             [ticketId]
         );
 
-        return result;
+        if (!result[0]) {
+            throw new NotFoundError("Ticket does not exist");
+        }
+
+        return result[0];
     }
+
+    static aliases = `
+        ticket_id as ticketId,
+        ticket_quantity as ticketQuantity,
+        ticket_price as ticketPrice,
+        event_id as eventId
+    `;
 }

@@ -8,22 +8,28 @@ export class EventsService {
         return EventsRepository.getAllEvents();
     }
 
-    static createEvent(event: EventsCreateDto): Promise<EventModel[]> {
+    static createEvent(event: EventsCreateDto): Promise<EventModel> {
         return EventsRepository.createEvent(event);
     }
 
-    static updateEvent(
+    static async updateEvent(
         eventId: string,
         event: EventsUpdateDto
-    ): Promise<EventModel[]> {
+    ): Promise<EventModel> {
+        await EventsRepository.getEvent(eventId);
+
         return EventsRepository.updateEvent(eventId, event);
     }
 
-    static deleteEvent(eventId: string): Promise<EventModel[]> {
+    static async deleteEvent(eventId: string): Promise<EventModel> {
+        await EventsRepository.getEvent(eventId);
+
         return EventsRepository.deleteEvent(eventId);
     }
 
-    static getEventTickets(eventId: string): Promise<TicketModel[]> {
+    static async getEventTickets(eventId: string): Promise<TicketModel[]> {
+        await EventsRepository.getEvent(eventId);
+
         return EventsRepository.getEventTickets(eventId);
     }
 }

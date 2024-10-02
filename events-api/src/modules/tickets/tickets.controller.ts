@@ -43,7 +43,7 @@ TicketsController.get(
 
             const ticket = await TicketsService.getTicket(ticketId);
 
-            return res.status(200).json({
+            res.status(200).json({
                 message: "Ticket Fetched Successfully",
                 data: ticket
             });
@@ -54,7 +54,7 @@ TicketsController.get(
                 });
             }
 
-            res.status(500).json({
+            return res.status(500).json({
                 message: "Failed To Fetch Ticket"
             });
         }

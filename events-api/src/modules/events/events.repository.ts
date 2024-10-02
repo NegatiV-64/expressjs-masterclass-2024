@@ -4,6 +4,7 @@ import { TicketModel } from "#/modules/tickets/tickets.model";
 import { EventsCreateDto, EventsUpdateDto } from "./dto/requests";
 import { v4 as uuid } from "uuid";
 import { convertToSnakeCase } from "#/shared/utils";
+import { NotFoundError } from "#/shared/errors";
 
 export class EventsRepository {
     static getAllEvents(): Promise<EventModel[]> {
@@ -23,17 +24,17 @@ export class EventsRepository {
         return result;
     }
 
-    static createEvent(event: EventsCreateDto): Promise<EventModel[]> {
+    static async createEvent(event: EventsCreateDto): Promise<EventModel> {
         const { eventName, eventDescription, eventLocation, eventDate } =
             event;
         const eventId = uuid();
 
-        const result = db.execute<EventModel>(
+        const result = await db.execute<EventModel>(
             `
             INSERT INTO events
-            (event_id, event_name, event_description, event_location, event_date)
+           (event_id, event_name, event_description, event_location, event_date)
             VALUES (?, ?, ?, ?, ?)
-            RETURNING *
+            RETURNING ${this.aliases}
         `,
             [
                 eventId,
@@ -44,11 +45,15 @@ export class EventsRepository {
             ]
         );
 
-        return result;
+        if (!result[0]) {
+            throw new Error("Internal Server Error");
+        }
+
+        return result[0];
     }
 
-    static async getEvent(id: string): Promise<EventModel[]> {
-        const result = db.execute<EventModel>(
+    static async getEvent(id: string): Promise<EventModel> {
+        const result = await db.execute<EventModel>(
             `
             SELECT ${this.aliases}
             FROM events
@@ -57,19 +62,17 @@ export class EventsRepository {
             [id]
         );
 
-        return result;
+        if (!result[0]) {
+            throw new NotFoundError("Event does not exist");
+        }
+
+        return result[0];
     }
 
     static async updateEvent(
         eventId: string,
         event: EventsUpdateDto
-    ): Promise<EventModel[]> {
-        const result = await EventsRepository.getEvent(eventId);
-
-        if (!result.length) {
-            throw new Error("Event Not Found");
-        }
-
+    ): Promise<EventModel> {
         const values = Object.values(event);
         values.push(eventId);
 
@@ -92,36 +95,32 @@ export class EventsRepository {
             [eventId]
         );
 
-        return updatedEvent;
-    }
-
-    static async deleteEvent(eventId: string): Promise<EventModel[]> {
-        const deletedEvent = await EventsRepository.getEvent(eventId);
-
-        if (!deletedEvent.length) {
-            throw new Error("Event Not Found");
+        if (!updatedEvent[0]) {
+            throw new NotFoundError("Event does not exist");
         }
 
-        await db.execute<EventModel>(
+        return updatedEvent[0];
+    }
+
+    static async deleteEvent(eventId: string): Promise<EventModel> {
+        const deletedEvent = await db.execute<EventModel>(
             `
             DELETE FROM events 
             WHERE event_id = ? 
-            RETURNING *
+            RETURNING ${this.aliases}
             `,
             [eventId]
         );
 
-        return deletedEvent;
+        if (!deletedEvent[0]) {
+            throw new NotFoundError("Event does not exist");
+        }
+
+        return deletedEvent[0];
     }
 
     static async getEventTickets(eventId: string): Promise<TicketModel[]> {
-        const event = await EventsRepository.getEvent(eventId);
-
-        if (!event.length) {
-            throw new Error("Event Not Found");
-        }
-
-        const result = db.execute<TicketModel>(
+        const result = await db.execute<TicketModel>(
             `
             SELECT
                 ticket_id as ticketId,
