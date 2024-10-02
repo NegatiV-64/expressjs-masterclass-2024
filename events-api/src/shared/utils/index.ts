@@ -1,3 +1,1 @@
-import { convertToSnakeCase } from "./convertToSnakeCase";
-
-export { convertToSnakeCase };
+export { convertToSnakeCase } from "./convertToSnakeCase";
