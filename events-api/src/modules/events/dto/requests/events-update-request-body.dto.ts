@@ -1,3 +1,4 @@
+import { eventDateRegex } from "#/shared/constants/eventDateRegex";
 import { z } from "zod";
 
 export const eventsUpdateRequestBodyDtoSchema = z.object({
@@ -9,13 +10,12 @@ export const eventsUpdateRequestBodyDtoSchema = z.object({
   eventLocation: z.string().max(70, { message: "Max length is 70" }).optional(),
   eventDate: z
     .string()
-    .regex(
-      /^(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01])T([01]\d|2[0-3]):([0-5]\d)?/,
-      { message: "Date must match YYYY-MM-DDTHH:mm format" },
-    )
+    .regex(eventDateRegex, {
+      message: "Date must match YYYY-MM-DDTHH:mm format",
+    })
     .optional(),
 });
 
-export type eventsUpdateRequestBodyDto = z.infer<
+export type EventsUpdateRequestBodyDto = z.infer<
   typeof eventsUpdateRequestBodyDtoSchema
 >;

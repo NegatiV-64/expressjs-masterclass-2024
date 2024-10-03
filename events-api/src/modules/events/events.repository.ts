@@ -1,22 +1,18 @@
 import { db } from "#/database/database";
 import { EventModel } from "#/modules/events/events.model";
 import { randomUUID } from "crypto";
-import { eventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
-import { eventsUpdateRequestBodyDto } from "./dto/requests/events-update-request-body.dto";
-import { convertCamelToSnakeCase } from "#/shared/utils/convertCamelToSnakeCase";
+import { EventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
+import { EventsUpdateRequestBodyDto } from "./dto/requests/events-update-request-body.dto";
+import { convertCamelToSnakeCase } from "#/shared/utils/convert-camel-to-snakecase";
 import { TicketModel } from "../tickets/tickets.model";
+import { eventColumns } from "#/shared/constants/eventColumns";
+import { ticketColumns } from "#/shared/constants/ticketColumns";
 
 export class EventsRepository {
   static async getAll(): Promise<EventModel[]> {
     const result = db.execute<EventModel>(`
         SELECT
-            event_id as eventId,
-            event_name as eventName,
-            event_description as eventDescription,
-            event_location as eventLocation,
-            event_date as eventDate,
-            event_created_at as eventCreatedAt,
-            event_updated_at as eventUpdatedAt
+            ${eventColumns}
         FROM
             events
     `);
@@ -25,7 +21,7 @@ export class EventsRepository {
   }
 
   static async createOne(
-    data: eventsCreateRequestBodyDto,
+    data: EventsCreateRequestBodyDto,
   ): Promise<EventModel[]> {
     const result = db.execute<EventModel>(
       `
@@ -36,7 +32,7 @@ export class EventsRepository {
             event_location,
             event_date)
         VALUES (?, ?, ?, ?, ?)
-        RETURNING *
+        RETURNING ${eventColumns}
     `,
       [
         randomUUID(),
@@ -54,13 +50,7 @@ export class EventsRepository {
     const result = db.execute<EventModel>(
       `
         SELECT
-            event_id as eventId,
-            event_name as eventName,
-            event_description as eventDescription,
-            event_location as eventLocation,
-            event_date as eventDate,
-            event_created_at as eventCreatedAt,
-            event_updated_at as eventUpdatedAt
+            ${eventColumns}
         FROM
             events
         WHERE event_id = ?
@@ -72,7 +62,7 @@ export class EventsRepository {
   }
 
   static async updateOne(
-    data: eventsUpdateRequestBodyDto,
+    data: EventsUpdateRequestBodyDto,
     id: string,
   ): Promise<EventModel[]> {
     const columns: string[] = [];
@@ -89,7 +79,7 @@ export class EventsRepository {
         UPDATE events
         SET ${columns.join(", ")}
         WHERE event_id = ?
-        RETURNING *
+        RETURNING ${eventColumns}
     `,
       [...queryArgs, id],
     );
@@ -103,7 +93,7 @@ export class EventsRepository {
         DELETE FROM
             events
         WHERE event_id = ?
-        RETURNING *
+        RETURNING ${eventColumns}
     `,
       [id],
     );
@@ -115,10 +105,7 @@ export class EventsRepository {
     const result = db.execute<TicketModel>(
       `
         SELECT
-            ticket_id as ticketId,
-            ticket_quantity as ticketQuantity,
-            ticket_price as ticketPrice,
-            event_id as eventId
+            ${ticketColumns}
         FROM
             tickets
         WHERE event_id = ?
