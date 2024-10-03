@@ -11,6 +11,6 @@ export const ticketsCreateRequestBodyDtoSchema = z.object({
   eventId: z.string().uuid({ message: "Event ID is not a valid uuid" }),
 });
 
-export type ticketsCreateRequestBodyDto = z.infer<
+export type TicketsCreateRequestBodyDto = z.infer<
   typeof ticketsCreateRequestBodyDtoSchema
 >;

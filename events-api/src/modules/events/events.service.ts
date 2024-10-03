@@ -1,8 +1,9 @@
 import { EventModel } from "#/modules/events/events.model";
 import { EventsRepository } from "#/modules/events/events.repository";
+import { CustomError } from "#/shared/errors/custom-error";
 import { TicketModel } from "../tickets/tickets.model";
-import { eventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
-import { eventsUpdateRequestBodyDto } from "./dto/requests/events-update-request-body.dto";
+import { EventsCreateRequestBodyDto } from "./dto/requests/events-create-request-body.dto";
+import { EventsUpdateRequestBodyDto } from "./dto/requests/events-update-request-body.dto";
 
 export class EventsService {
   static async getEvents(): Promise<EventModel[]> {
@@ -12,54 +13,71 @@ export class EventsService {
   }
 
   static async createEvent(
-    data: eventsCreateRequestBodyDto,
-  ): Promise<EventModel[]> {
-    const newEvent = await EventsRepository.createOne(data);
+    data: EventsCreateRequestBodyDto,
+  ): Promise<EventModel> {
+    const [newEvent] = await EventsRepository.createOne(data);
+
+    if (!newEvent) {
+      throw new CustomError({
+        message: "Bad Request",
+        statusCode: 400,
+      });
+    }
 
     return newEvent;
   }
 
-  static async getEvent(id: string): Promise<EventModel[] | null> {
-    const event = await EventsRepository.getOne(id);
+  static async getEvent(id: string): Promise<EventModel> {
+    const [event] = await EventsRepository.getOne(id);
 
-    if (event.length === 0) {
-      return null;
+    if (!event) {
+      throw new CustomError({
+        message: "Event with that id does not exist",
+        statusCode: 404,
+      });
     }
 
     return event;
   }
 
   static async updateEvent(
-    data: eventsUpdateRequestBodyDto,
+    data: EventsUpdateRequestBodyDto,
     id: string,
-  ): Promise<EventModel[] | null> {
-    const updatedEvent = await EventsRepository.updateOne(data, id);
+  ): Promise<EventModel> {
+    const [updatedEvent] = await EventsRepository.updateOne(data, id);
 
-    if (updatedEvent.length === 0) {
-      return null;
+    if (!updatedEvent) {
+      throw new CustomError({
+        message: "Event with that id does not exist",
+        statusCode: 404,
+      });
     }
 
     return updatedEvent;
   }
 
-  static async deleteEvent(id: string): Promise<EventModel[] | null> {
-    const deletedEvent = await EventsRepository.deleteOne(id);
+  static async deleteEvent(id: string): Promise<EventModel> {
+    const [deletedEvent] = await EventsRepository.deleteOne(id);
 
-    if (deletedEvent.length === 0) {
-      return null;
+    if (!deletedEvent) {
+      throw new CustomError({
+        message: "Event with that id does not exist",
+        statusCode: 404,
+      });
     }
 
     return deletedEvent;
   }
 
-  static async getTickets(eventId: string): Promise<TicketModel[] | null> {
-    const event = await EventsRepository.getOne(eventId);
-
-    if (event.length === 0) {
-      return null;
-    }
-
+  static async getTickets(eventId: string): Promise<TicketModel[]> {
     const tickets = await EventsRepository.getAllTickets(eventId);
+
+    if (tickets.length === 0) {
+      throw new CustomError({
+        message: "Event with that id does not exist",
+        statusCode: 404,
+      });
+    }
 
     return tickets;
   }

@@ -1,11 +1,13 @@
 import { db } from "#/database/database";
 import { randomUUID } from "crypto";
-import { ticketsCreateRequestBodyDto } from "./dto/requests/tickets-create-request-body.dto";
+import { TicketsCreateRequestBodyDto } from "./dto/requests/tickets-create-request-body.dto";
 import { TicketModel } from "./tickets.model";
+import { ticketColumns } from "#/shared/constants/ticketColumns";
+import { eventColumns } from "#/shared/constants/eventColumns";
 
 export class TicketsRepository {
   static async createOne(
-    data: ticketsCreateRequestBodyDto,
+    data: TicketsCreateRequestBodyDto,
   ): Promise<TicketModel[]> {
     const result = db.execute<TicketModel>(
       `
@@ -15,7 +17,7 @@ export class TicketsRepository {
             ticket_price,
             event_id)
         VALUES (?, ?, ?, ?)
-        RETURNING *
+        RETURNING ${ticketColumns}
     `,
       [randomUUID(), data.ticketQuantity, data.ticketPrice, data.eventId],
     );
@@ -30,13 +32,7 @@ export class TicketsRepository {
             t.ticket_id as ticketId,
             t.ticket_quantity as ticketQuantity,
             t.ticket_price as ticketPrice,
-            t.event_id as eventId,
-            event_name as eventName,
-            event_description as eventDescription,
-            event_location as eventLocation,
-            event_date as eventDate,
-            event_created_at as eventCreatedAt,
-            event_updated_at as eventUpdatedAt
+            ${eventColumns}
         FROM tickets as t
         INNER JOIN events USING(event_id)
         WHERE t.ticket_id = ?
