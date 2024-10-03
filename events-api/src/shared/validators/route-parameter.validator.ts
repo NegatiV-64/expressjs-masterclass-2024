@@ -1,12 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
 
-export function validateRequestBody(schema: z.ZodObject<any, any>) {
+const idRouteParameterSchema = z
+  .string()
+  .uuid({ message: "ID is not a valid uuid" });
+
+export function validateIdRouteParameter(param: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body = req.body;
-      const parsedBody = schema.parse(body);
-      req.body = parsedBody;
+      const id = req.params[param];
+      const parsedId = idRouteParameterSchema.parse(id);
+      req.params[param] = parsedId;
       next();
     } catch (error) {
       if (error instanceof ZodError) {
@@ -20,7 +24,7 @@ export function validateRequestBody(schema: z.ZodObject<any, any>) {
 
       return res.status(400).json({
         message: "Bad Request",
-        errors: ["Invalid body"],
+        errors: ["Invalid Id"],
       });
     }
   };
