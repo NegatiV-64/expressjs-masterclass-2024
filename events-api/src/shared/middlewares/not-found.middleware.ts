@@ -1,4 +1,4 @@
-import { Logger } from "#/shared/libs/logger.lib";
+import { Logger } from "#/shared/libs";
 import { Request, Response } from "express";
 
 export function notFoundMiddleware(req: Request, res: Response) {
